@@ -18,7 +18,7 @@
 - ```next:chat:id``` - globalni id za chat
 - ```next:person:id``` - globalni id za person
 - ```category:[ID_KATEGORIJE]:posts``` - lista ID-jeva objava u kategoriji
-- ```category:[ID_KATEGORIJE]:name``` - lnaziv kategorije
+- ```category:[ID_KATEGORIJE]:name``` - naziv kategorije
 - ```post:[ID_OBJAVE]:post``` - objekat te objave na osnovu ID-ja
 - ```post:[ID_OBJAVE]:comments``` - lista komentara (objekti) neke objave
 - ```person:[ID_OSOBE]:username``` - username osobe
