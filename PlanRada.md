@@ -14,9 +14,22 @@
 
 ## Back
 
+- ```next:post:id``` - globalni id za ispovest
+- ```next:chat:id``` - globalni id za chat
+- ```next:person:id``` - globalni id za person
+- ```category:[ID_KATEGORIJE]:posts``` - lista ID-jeva objava u kategoriji
+- ```category:[ID_KATEGORIJE]:name``` - lnaziv kategorije
+- ```post:[ID_OBJAVE]:post``` - objekat te objave na osnovu ID-ja
+- ```post:[ID_OBJAVE]:comments``` - lista komentara (objekti) neke objave
+- ```person:[ID_OSOBE]:username``` - username osobe
+- ```person:[ID_OSOBE]:posts``` - lista ID-jeva objava te osobe
+- ```chat``` - kanal za chatovanje, tu se stavljaju objekti tipa Chat
+- u konstruktoru proveriti da li globalni idjevi postoje, ako ne - napraviti ih
+
 ### Entiteti
 
-- Ispovest
+- Objava (string text, datetime time, string author_id, int upvotes, int downvotes)
 - Osoba
 - Kategorija
-- Chat
+- Chat (senderID, recipientID, text, time)
+- Komentar (string text, int upvotes, int downvotes,string author_id,datetime time)
