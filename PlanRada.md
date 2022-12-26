@@ -2,15 +2,26 @@
 
 ## Front
 
-- Live feed sa ispovestima/objavama
+- Profil osobe (**Ema**)
+- Stranica za dodavanje ispovesti  -> NA home page + dugme koje vodi na nju
+
+- Feed sa ispovestima/objavama (**Matija**)
   - Izbor topica na vrhu glavne stranice (kao YT)
   - Like, judge i comment opcije za post
-  - Sortiranje po broju like-ova
-  - Sortiranje po datumu
-- Mogucnost pokretanja privatnog chat-a sa osobom koja je postavila objavu
+  - //
+  - Sortiranje po broju like-ova [AKO OSTANE VREME]
+  - Sortiranje po datumu [AKO OSTANE VREME]
+
+- Feed sa konkretnom objavom (**Djordje**)
+  - Komentari [Objavljivanje Edit Delete]
+  - Upvote, Downvote za komentare
+  - Objavljivanje Edit Delete za objavu
+  - Upvote, Downvote za objavu
+  
+- Mogucnost pokretanja privatnog chat-a sa osobom koja je postavila objavu (nekad...)
   - Chat baziran na pub-sub modelu
   - Obavestenja za novi chat
-- Stranica za dodavanje ispovesti
+ 
 
 ## Back
 
