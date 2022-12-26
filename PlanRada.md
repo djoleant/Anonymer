@@ -21,9 +21,12 @@
 - ```category:[ID_KATEGORIJE]:posts``` - lista ID-jeva objava u kategoriji
 - ```category:[ID_KATEGORIJE]:name``` - naziv kategorije
 - ```post:[ID_OBJAVE]:post``` - objekat te objave na osnovu ID-ja
-- ```post:[ID_OBJAVE]:comments``` - lista komentara (objekti) neke objave
+- ```post:[ID_OBJAVE]:comments``` - lista ID-jeva komentara neke objave
 - ```post:[ID_OBJAVE]:upvotes``` - lista ID-jeva osoba koje su upvoteovale
 - ```post:[ID_OBJAVE]:downvotes``` - llista ID-jeva osoba koje su downvoteovale
+- ```comment:[ID_KOMENTARA]:comment``` - komentar (objekat)
+- ```comment:[ID_KOMENTARA]:upvotes``` - lista ID-jeva osoba koje su upvoteovale
+- ```comment:[ID_KOMENTARA]:downvotes``` - lista ID-jeva osoba koje su downvoteovale
 - ```person:[ID_OSOBE]:username``` - username osobe
 - ```person:[ID_OSOBE]:posts``` - lista ID-jeva objava te osobe
 - ```chat``` - kanal za chatovanje, tu se stavljaju objekti tipa Chat
