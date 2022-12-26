@@ -10,7 +10,7 @@ namespace Anonymer.Controllers
     [Route("api/[controller]")]
     public class HomeController : Controller
     {
-        readonly RedisClient redis = new("redis://default:redispw@localhost:49157");
+        readonly RedisClient redis = new("redis://default:redispw@localhost:49153");
         public HomeController()
         {
             if (redis.Get<object>("next:post:id") == null)
