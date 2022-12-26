@@ -26,6 +26,8 @@ import { loadUserData, clearData } from "./actions/Auth";
 import NotFoundPage from "./components/NotFoundPage";
 import SuccessRating from "./components/SuccessRating";
 import AdminPage from "./AdminPage";
+import AddPostPage from "./AddPostPage";
+import PersonProfilePage from "./PersonProfilePage";
 import Feed from "./Feed";
 
 const getDesignTokens = (mode) => ({
@@ -447,6 +449,24 @@ export default function App() {
             element={
               <Header
                 Component={AboutUsPage}
+                ThemeHandler={colorMode.toggleColorMode}
+              />
+            }
+          />
+          <Route
+            path="/PersonProfile"
+            element={
+              <Header
+                Component={PersonProfilePage}
+                ThemeHandler={colorMode.toggleColorMode}
+              />
+            }
+          />
+          <Route
+            path="/AddPost"
+            element={
+              <Header
+                Component={AddPostPage}
                 ThemeHandler={colorMode.toggleColorMode}
               />
             }
