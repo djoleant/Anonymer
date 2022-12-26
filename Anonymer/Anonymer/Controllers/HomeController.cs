@@ -2,6 +2,7 @@
 using ServiceStack.Redis;
 using Models;
 using System.Text.Json;
+using System.ComponentModel.Design;
 
 namespace Anonymer.Controllers
 {
@@ -9,7 +10,7 @@ namespace Anonymer.Controllers
     [Route("api/[controller]")]
     public class HomeController : Controller
     {
-        readonly RedisClient redis = new("redis://default:redispw@localhost:49153");
+        readonly RedisClient redis = new("redis://default:redispw@localhost:49157");
         public HomeController()
         {
             if (redis.Get<object>("next:post:id") == null)
@@ -20,6 +21,8 @@ namespace Anonymer.Controllers
                 redis.Set("next:chat:id", 1);
             if (redis.Get<object>("next:category:id") == null)
                 redis.Set("next:category:id", 1);
+            if (redis.Get<object>("next:comment:id") == null)
+                redis.Set("next:comment:id", 1);
         }
 
         private string GetNextPostID()
@@ -43,6 +46,12 @@ namespace Anonymer.Controllers
         private string GetNextCategoryID()
         {
             long nextCounterKey = redis.Incr("next:category:id");
+            return nextCounterKey.ToString("x");
+        }
+
+        private string GetNextCommentID()
+        {
+            long nextCounterKey = redis.Incr("next:comment:id");
             return nextCounterKey.ToString("x");
         }
 
@@ -72,16 +81,19 @@ namespace Anonymer.Controllers
                 CategoryID = categoryID
             };
             redis.PushItemToList("category:" + categoryID + ":posts", id);
+            redis.PushItemToList("person:" + authorID + ":posts", id);
             redis.Set("post:" + id + ":post", post);
             return Ok(new { post });
         }
 
         [HttpPost]
-        [Route("AddComment/{text}/{authorID}/{postID}")] //promeniti
+        [Route("AddComment/{text}/{authorID}/{postID}")] 
         public IActionResult AddComment(string text, string authorID, string postID)
         {
+            string id = GetNextCommentID();
             var comment = new Comment
             {
+                ID = id,
                 PostID = postID,
                 AuthorID = authorID,
                 Text = text,
@@ -89,9 +101,9 @@ namespace Anonymer.Controllers
                 Upvotes = 0,
                 Downvotes = 0
             };
-            redis.PushItemToList("post:" + postID + ":comments", JsonSerializer.Serialize(comment));
-
-            return Ok();
+            redis.PushItemToList("post:" + postID + ":comments", id);
+            redis.Set("comment:" + id + ":comment", comment);
+            return Ok(new { comment });
         }
 
         [HttpPost]
@@ -137,13 +149,14 @@ namespace Anonymer.Controllers
 
         [HttpGet]
         [Route("GetComments/{postID}")]
-        public IActionResult GetComments(string postID) //promeniti
+        public IActionResult GetComments(string postID) 
         {
             var result = redis.GetAllItemsFromList("post:" + postID + ":comments");
             var comments = new List<Comment>();
-            foreach (var comment in result)
+            foreach (var id in result)
             {
-                comments.Add((Comment)JsonSerializer.Deserialize(comment, typeof(Comment)));
+                var comment=redis.Get<Comment>("comment:" + id + ":comment");
+                comments.Add(comment);
             }
             return Ok(new { comments });
         }
@@ -199,23 +212,32 @@ namespace Anonymer.Controllers
             redis.Remove("post:" + postID + ":post");
             redis.Remove("post:" + postID + ":upvotes");
             redis.Remove("post:" + postID + ":downvotes");
+            redis.RemoveItemFromList("person:" + post.AuthorID + ":posts", postID);
+
+
+            foreach (var id in redis.GetAllItemsFromList("post:" + postID + ":comments"))
+            {
+                redis.Remove("comment:" + id + ":comment");
+                redis.Remove("comment:" + id + ":upvotes");
+                redis.Remove("comment:" + id + ":downvotes");
+            }
+
             redis.Remove("post:" + postID + ":comments");
-            //briasnje svih komentara
+
             return Ok();
         }
 
-        // [HttpDelete]
-        // [Route("DeleteComment/{postID}")]
-        // public IActionResult DeletePost(string postID)
-        // {
-        //     var post = redis.Get<Post>("post:" + postID + ":post");
-        //     redis.RemoveItemFromList("category:" + post.CategoryID + ":posts", postID);
-        //     redis.Remove("post:" + postID + ":post");
-        //     redis.Remove("post:" + postID + ":upvotes");
-        //     redis.Remove("post:" + postID + ":downvotes");
-
-        //     return Ok();
-        // }
+        [HttpDelete]
+        [Route("DeleteComment/{commentID}")]
+        public IActionResult DeleteComment(string commentID)
+        {
+            var comment = redis.Get<Comment>("comment:" + commentID + ":comment");
+            redis.RemoveItemFromList("post:" + comment.PostID + ":comments", commentID);
+            redis.Remove("comment:" + commentID + ":comment");
+            redis.Remove("comment:" + commentID + ":upvotes");
+            redis.Remove("comment:" + commentID + ":downvotes");
+            return Ok();
+        }
 
         [HttpGet]
         [Route("GetCategories")]
@@ -229,6 +251,94 @@ namespace Anonymer.Controllers
                 categories.Add(new Category { ID = id, Name = result });
             }
             return Ok(new { categories });
+        }
+
+        [HttpPut]
+        [Route("UpvoteComment/{commentID}/{userID}")]
+        public IActionResult UpvoteComment(string commentID, string userID)
+        {
+            var result = redis.Get<Comment>("comment:" + commentID + ":comment");
+            result.Upvotes++;
+            redis.Set("comment:" + commentID + ":comment", result);
+            redis.PushItemToList("comment:" + commentID + ":upvotes", userID);
+            return Ok();
+        }
+
+        [HttpPut]
+        [Route("DownvoteComment/{commentID}/{userID}")]
+        public IActionResult DownvoteComment(string commentID, string userID)
+        {
+            var result = redis.Get<Comment>("comment:" + commentID + ":comment");
+            result.Downvotes++;
+            redis.Set("comment:" + commentID + ":comment", result);
+            redis.PushItemToList("comment:" + commentID + ":downvotes", userID);
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("GetCommentUpvotes/{commentID}")]
+        public IActionResult GetCommentUpvotes(string commentID)
+        {
+            var upvotes = redis.GetAllItemsFromList("comment:" + commentID + ":upvotes");
+            var users = new List<Person>();
+            foreach (var id in upvotes)
+            {
+                var user = redis.Get<string>("person:" + id + ":username");
+                users.Add(new Person { ID = id, Username = user });
+            }
+            return Ok(new { users });
+        }
+
+        [HttpGet]
+        [Route("GetCommentDownvotes/{commentID}")]
+        public IActionResult GetCommentDownvotes(string commentID)
+        {
+            var downvotes = redis.GetAllItemsFromList("comment:" + commentID + ":downvotes");
+            var users = new List<Person>();
+            foreach (var id in downvotes)
+            {
+                var user = redis.Get<string>("person:" + id + ":username");
+                users.Add(new Person { ID = id, Username = user });
+            }
+            return Ok(new { users });
+        }
+
+        [HttpPut]
+        [Route("EditPost/{postID}/{text}")]
+        public IActionResult EditPost(string postID, string text)
+        {
+            var post = redis.Get<Post>("post:" + postID + ":post");
+            post.Text = text;
+            post.Time = DateTime.Now;
+            redis.Set("post:" + postID + ":post", post);
+
+            return Ok(new { post});
+        }
+
+        [HttpPut]
+        [Route("EditComment/{commentID}/{text}")]
+        public IActionResult EditComment(string commentID, string text)
+        {
+            var comment = redis.Get<Comment>("comment:" + commentID + ":comment");
+            comment.Text = text;
+            comment.Time = DateTime.Now;
+            redis.Set("comment:" + commentID + ":comment", comment);
+
+            return Ok(new { comment });
+        }
+
+        [HttpGet]
+        [Route("GetPersonPosts/{personID}")]
+        public IActionResult GetPersonPosts(string personID)
+        {
+            var postIDs = redis.GetAllItemsFromList("person:" + personID + ":posts");
+            var posts = new List<Post>();
+            foreach (var id in postIDs)
+            {
+                var post = redis.Get<Post>("post:" + id + ":post");
+                posts.Add(post);
+            }
+            return Ok(new { posts });
         }
 
         [HttpPost]
