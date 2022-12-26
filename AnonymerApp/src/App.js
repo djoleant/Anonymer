@@ -26,6 +26,7 @@ import { loadUserData, clearData } from "./actions/Auth";
 import NotFoundPage from "./components/NotFoundPage";
 import SuccessRating from "./components/SuccessRating";
 import AdminPage from "./AdminPage";
+import Feed from "./Feed";
 
 const getDesignTokens = (mode) => ({
   palette: {
@@ -427,7 +428,7 @@ export default function App() {
             path="/Home"
             element={
               <Header
-                Component={HomePage}
+                Component={Feed}
                 ThemeHandler={colorMode.toggleColorMode}
               />
             }
