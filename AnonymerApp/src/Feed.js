@@ -25,6 +25,7 @@ export default function Feed() {
         console.log(posts);
     }
 
+    localStorage.setItem("userID", "2");
     useEffect(() => {
         getCategories();
     }, []);
@@ -94,6 +95,7 @@ export default function Feed() {
                                     authorID={post.authorID}
                                     upvotes={post.upvotes}
                                     downvotes={post.downvotes}
+                                    postID={post.id}
                                 />
                             </Grid>
                         ))
