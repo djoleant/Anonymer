@@ -148,6 +148,23 @@ namespace Anonymer.Controllers
         }
 
         [HttpGet]
+        [Route("HasUserVoted/{userID}/{postID}")]
+        public IActionResult HasUserVoted(string userID,string postID)
+        {
+            var upvotes = redis.GetAllItemsFromList("post:" + postID + ":upvotes");
+            var downvotes = redis.GetAllItemsFromList("post:" + postID + ":downvotes");
+            return Ok(new { upvoted=upvotes.Contains(userID),downvoted=downvotes.Contains(userID) });
+        }
+
+        [HttpGet]
+        [Route("GetUsername/{userID}")]
+        public IActionResult GetUsername(string userID)
+        {
+            
+            return Ok(new { username=redis.Get<string>("person:" + userID + ":username")});
+        }
+
+        [HttpGet]
         [Route("GetComments/{postID}")]
         public IActionResult GetComments(string postID) 
         {
