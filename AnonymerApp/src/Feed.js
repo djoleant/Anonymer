@@ -1,4 +1,4 @@
-import { Paper, IconButton, Divider, InputBase, Box, Chip, Container, Grid, CssBaseline } from "@mui/material";
+import { Paper, IconButton, Divider, InputBase, Box, Chip, Container, Grid, CssBaseline, TextField, Typography, Button } from "@mui/material";
 import { useEffect, useState } from "react";
 import { Menu as MenuIcon, Directions as DirectionsIcon, AddCircle as SearchIcon } from "@mui/icons-material";
 import PostCard from "./components/Feed/PostCard";
@@ -25,10 +25,19 @@ export default function Feed() {
         console.log(posts);
     }
 
+    const getUsername = async () => {
+        const resp = await fetch("http://localhost:5222/api/Home/GetUsername/" + localStorage.getItem("userID"));
+        const data = await resp.json();
+        setUsername(data.username);
+    }
+
     localStorage.setItem("userID", "2");
     useEffect(() => {
         getCategories();
+        getUsername();
     }, []);
+
+    const [username, setUsername] = useState("");
 
     return (
         <>
@@ -86,19 +95,31 @@ export default function Feed() {
             </Box>
             <Container>
                 <Grid container spacing={3}>
+                    <Grid item xs={12} sx={{ display: "flex", justifyContent: "space-between" }}>
+                        <Box sx={{ display: "flex" }}>
+                            <Typography variant="h3" sx={{ fontStyle: "italic" }}>{"Welcome, "}</Typography>
+                            <Typography variant="h3" sx={{ fontWeight: "1000", ml: 2 }}>{" @" + username + " 😄"}</Typography>
+                        </Box >
+                        <Button size="large" variant="outlined" sx={{ mr: 2, mt: 2 }}>Write something </Button>
+                    </Grid>
+
                     {
-                        posts.map((post, index) => (
-                            <Grid item xs={12} key={index}>
-                                <PostCard
-                                    text={post.text}
-                                    time={post.time}
-                                    authorID={post.authorID}
-                                    upvotes={post.upvotes}
-                                    downvotes={post.downvotes}
-                                    postID={post.id}
-                                />
-                            </Grid>
-                        ))
+                        posts.length > 0 ?
+                            posts.map((post, index) => (
+                                <Grid item xs={12} key={index}>
+                                    <PostCard
+                                        text={post.text}
+                                        time={post.time}
+                                        authorID={post.authorID}
+                                        postUpvotes={post.upvotes}
+                                        postDownvotes={post.downvotes}
+                                        postID={post.id}
+                                    />
+                                </Grid>
+                            )) :
+                            <Box sx={{ display: "flex", justifyContent: "center", width: "100%", mt: 5 }}>
+                                <Typography variant="h4">Looks like there are no posts in this category... 🙄</Typography>
+                            </Box >
                     }
                 </Grid >
             </Container>

@@ -13,8 +13,8 @@ import CommentIcon from '@mui/icons-material/ModeComment';
 
 export default function PostCard({
     text = "Text...",
-    upvotes = 0,
-    downvotes = 0,
+    postUpvotes = 0,
+    postDownvotes = 0,
     time,
     maxWidth = "100%",
     authorID,
@@ -40,6 +40,26 @@ export default function PostCard({
         setAuthor(data.username);
     }
 
+    const upvote = async () => {
+        const resp = await fetch("http://localhost:5222/api/Home/Upvote/" + postID + "/" + localStorage.getItem("userID"), {
+            method: "PUT"
+        });
+        if (resp.ok) {
+            setUpvotes(upvotes + 1);
+            getUserPostInfo();
+        }
+    }
+
+    const downvote = async () => {
+        const resp = await fetch("http://localhost:5222/api/Home/Downvote/" + postID + "/" + localStorage.getItem("userID"), {
+            method: "PUT"
+        });
+        if (resp.ok) {
+            setDownvotes(downvotes + 1);
+            getUserPostInfo();
+        }
+    }
+
     useEffect(() => {
         getUserPostInfo();
         getAuthor();
@@ -47,6 +67,8 @@ export default function PostCard({
 
     const [hasVoted, setHasVoted] = useState({ upvoted: false, downvoted: false });
     const [author, setAuthor] = useState("");
+    const [upvotes, setUpvotes] = useState(postUpvotes);
+    const [downvotes, setDownvotes] = useState(postDownvotes);
 
     return (
         <Card variant="outlined" sx={{ p: 3, maxWidth: maxWidth }}>
@@ -55,18 +77,21 @@ export default function PostCard({
                     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                         <IconButton
                             sx={{ width: "40px" }}
+                            onClick={() => { upvote() }}
                         >
                             <ArrowUpwardIcon color={hasVoted.upvoted ? "success" : "disabled"} />
                         </IconButton>
                         <Typography align="right" variant="subtitle2">{upvotes}</Typography>
                         <IconButton
                             sx={{ width: "40px" }}
+                            onClick={() => { downvote() }}
                         >
                             <ArrowDownwardIcon color={hasVoted.downvoted ? "error" : "disabled"} />
                         </IconButton>
                         <Typography align="right" variant="subtitle2">{downvotes}</Typography>
                         <IconButton
                             sx={{ width: "40px" }}
+                            
                         >
                             <CommentIcon />
                         </IconButton>
@@ -87,7 +112,7 @@ export default function PostCard({
             {
                 (time != undefined) ?
                     <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", pl: 11 }}>
-                        <Typography align="right" variant="subtitle2">{"Author: " + author}</Typography>
+                        <Typography align="right" variant="subtitle2">{"Author: @" + author}</Typography>
                         <Typography align="right" variant="subtitle2">{getDateString(time)}</Typography>
                     </Box>
                     :
