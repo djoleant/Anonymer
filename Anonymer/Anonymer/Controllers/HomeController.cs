@@ -148,6 +148,15 @@ namespace Anonymer.Controllers
         }
 
         [HttpGet]
+        [Route("GetPersonInfo/{personID}")]
+        public IActionResult GetPersonUsername(string personID)
+        {
+            var username = redis.Get<string>("person:" + personID + ":username");
+           
+            return Ok(new { username });
+        }
+
+        [HttpGet]
         [Route("HasUserVoted/{userID}/{postID}")]
         public IActionResult HasUserVoted(string userID,string postID)
         {
