@@ -2,7 +2,7 @@ import {
   Paper,
   IconButton,
   Divider,
-  InputBase,
+  Input,
   Box,
   Chip,
   Container,
@@ -13,10 +13,12 @@ import {
   Button,
 } from "@mui/material";
 import { useEffect, useState } from "react";
+import AddIcon from "@mui/icons-material/Add";
 import {
   Menu as MenuIcon,
   Directions as DirectionsIcon,
   AddCircle as SearchIcon,
+  CoPresent,
 } from "@mui/icons-material";
 import PostCard from "./components/ConcretePost/PostCard";
 import { useParams } from "react-router-dom";
@@ -32,16 +34,15 @@ export default function ConcretePost({
   authorID,
   postID,
 }) {
-  const [categories, setCategories] = useState([]);
-  const [selectedCategory, setSelectedCategory] = useState(-1);
-
   const [hasVoted, setHasVoted] = useState({
     upvoted: false,
     downvoted: false,
   });
+
   const [author, setAuthor] = useState("");
   const [upvotes, setUpvotes] = useState(postUpvotes);
   const [downvotes, setDownvotes] = useState(postDownvotes);
+  const [comments, setComments] = useState([]);
 
   const { id } = useParams();
 
@@ -64,6 +65,16 @@ export default function ConcretePost({
     );
     const data = await resp.json();
     setHasVoted(data);
+  };
+
+  const getComments = async () => {
+    const result = await fetch(
+      "http://localhost:5222/api/Home/GetComments/" + id
+    );
+    const data = await result.json();
+    console.log("[GetComments:]", data);
+    setComments(data.comments);
+    console.log(comments);
   };
 
   const getPost = async () => {
@@ -95,6 +106,7 @@ export default function ConcretePost({
     );
     const data = await resp.json();
     setAuthor(data.username);
+    console.log("[getAuthor] author: ", author);
   };
 
   const downvote = async () => {
@@ -117,6 +129,7 @@ export default function ConcretePost({
   useEffect(() => {
     getPost();
     getAuthor();
+    getComments();
   }, []);
 
   return (
@@ -151,43 +164,43 @@ export default function ConcretePost({
 
             {
               // ovde turi upw i dwnvt
-              <Grid item xs={1} sx={{ display: "flex" }}>
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  <IconButton
-                    sx={{ width: "40px" }}
-                    onClick={() => {
-                      upvote();
-                    }}
-                  >
-                    <ArrowUpwardIcon
-                      color={hasVoted.upvoted ? "success" : "disabled"}
-                    />
-                  </IconButton>
-                  <Typography align="right" variant="subtitle2">
-                    {upvotes}
-                  </Typography>
-                  <IconButton
-                    sx={{ width: "40px" }}
-                    onClick={() => {
-                      downvote();
-                    }}
-                  >
-                    <ArrowDownwardIcon
-                      color={hasVoted.downvoted ? "error" : "disabled"}
-                    />
-                  </IconButton>
-                  <Typography align="right" variant="subtitle2">
-                    {downvotes}
-                  </Typography>
-                  <IconButton sx={{ width: "40px" }}></IconButton>
-                </Box>
-              </Grid>
+              //   <Grid item xs={1} sx={{ display: "flex" }}>
+              //     <Box
+              //       sx={{
+              //         display: "flex",
+              //         flexDirection: "row",
+              //         alignItems: "center",
+              //       }}
+              //     >
+              //       <IconButton
+              //         sx={{ width: "40px" }}
+              //         onClick={() => {
+              //           upvote();
+              //         }}
+              //       >
+              //         <ArrowUpwardIcon
+              //           color={hasVoted.upvoted ? "success" : "disabled"}
+              //         />
+              //       </IconButton>
+              //       <Typography align="right" variant="subtitle2">
+              //         {upvotes}
+              //       </Typography>
+              //       <IconButton
+              //         sx={{ width: "40px" }}
+              //         onClick={() => {
+              //           downvote();
+              //         }}
+              //       >
+              //         <ArrowDownwardIcon
+              //           color={hasVoted.downvoted ? "error" : "disabled"}
+              //         />
+              //       </IconButton>
+              //       <Typography align="right" variant="subtitle2">
+              //         {downvotes}
+              //       </Typography>
+              //       <IconButton sx={{ width: "40px" }}></IconButton>
+              //     </Box>
+              //   </Grid>
             }
           </Grid>
 
@@ -204,6 +217,116 @@ export default function ConcretePost({
             </Grid>
             //ovde ide post
           }
+        </Grid>
+        <Divider style={{ marginTop: 20 }}></Divider>
+        <Input
+          sx={{ ml: 5, mt: 2.5, fontSize: "14px" }}
+          placeholder="Comment... ✒️"
+          inputProps={{ "aria-label": "search google maps" }}
+          size="big"
+          id="new_category_input"
+        />
+        <IconButton color="secondary" aria-label="add an alarm">
+          <AddIcon />
+        </IconButton>
+        <Divider style={{ marginTop: 20 }}></Divider>
+        <Grid item xs={12} key={id} padding={3}>
+          {comments == undefined || comments.length == 0 ? (
+            <Typography>No comments found 😒</Typography>
+          ) : (
+            ""
+          )}
+          {comments != null && (
+            <Grid
+              container
+              spacing={2}
+              /*xs={12} md={6} lg={6}*/
+            >
+              {comments
+                //.filter(c => c.title.toLowerCase().includes(search.toLowerCase()))
+                .map((card, index) => {
+                  const {
+                    id,
+                    authorID,
+                    postID,
+                    text,
+                    downvotes,
+                    upvotes,
+                    time,
+                  } = card;
+                  console.log(card);
+                  return (
+                    <Grid
+                      container
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        marginBottom: 20,
+                        alignItems: "center",
+                      }}
+                    >
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "row",
+                          alignItems: "center",
+                        }}
+                      >
+                        <IconButton
+                          sx={{ width: "40px" }}
+                          onClick={() => {
+                            upvote();
+                          }}
+                        >
+                          <ArrowUpwardIcon
+                            color={hasVoted.upvoted ? "success" : "disabled"}
+                          />
+                        </IconButton>
+                        <Typography align="right" variant="subtitle2">
+                          {upvotes}
+                        </Typography>
+                        <IconButton
+                          sx={{ width: "40px" }}
+                          onClick={() => {
+                            downvote();
+                          }}
+                        >
+                          <ArrowDownwardIcon
+                            color={hasVoted.downvoted ? "error" : "disabled"}
+                          />
+                        </IconButton>
+                        <Typography align="right" variant="subtitle2">
+                          {downvotes}
+                        </Typography>
+                        <IconButton sx={{ width: "40px" }}></IconButton>
+                      </Box>
+                      <Grid
+                        container
+                        style={{
+                          display: "flex",
+                          flexDirection: "column",
+                          marginBottom: 20,
+                        }}
+                      >
+                        <Typography
+                          style={{
+                            textAlign: "center",
+                            marginLeft: 20,
+                            fontSize: 20,
+                            cursor: "pointer",
+                          }}
+                        >
+                          {card.text}
+                        </Typography>
+                        <Typography> {card.time.substring(11, 16)}</Typography>
+                        <Typography> {card.time.substring(0, 10)}</Typography>
+                        <Divider style={{ marginTop: 20 }}></Divider>
+                      </Grid>
+                    </Grid>
+                  );
+                })}
+            </Grid>
+          )}
         </Grid>
       </Container>
     </>
