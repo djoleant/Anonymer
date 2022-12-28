@@ -103,7 +103,7 @@ export default function Feed() {
                     <Grid item xs={12} sx={{ display: "flex", justifyContent: "space-between" }}>
                         <Box sx={{ display: "flex" }}>
                             <Typography variant="h3" sx={{ fontStyle: "italic" }}>{"Welcome, "}</Typography>
-                            <Typography variant="h3" sx={{ fontWeight: "1000", ml: 2 }}>{" @" + username + " 😄"}</Typography>
+                            <Typography variant="h3" sx={{ fontWeight: "1000", ml: 2 }} color="#32CD32">{" @" + username + " 😄"}</Typography>
                         </Box >
                         <Button size="large" variant="outlined" onClick={() => { navigate("/AddPost") }} sx={{ mr: 2, mt: 2 }}>Write something </Button>
                         <Button size="large" variant={sorted ? "contained" : "outlined"} onClick={() => {

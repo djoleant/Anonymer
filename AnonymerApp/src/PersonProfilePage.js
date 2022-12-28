@@ -91,7 +91,7 @@ export default function PersonProfilePage({ type, reloadHeader }) {
             <CssBaseline />
             <Grid container spacing={10}  >
                 <Grid item xs={12} md={10}>
-                    <Typography variant='h3' align="left" style={{fontWeight: 1000}}>@{info != undefined ? info:""}</Typography>
+                    <Typography variant='h3' align="left" style={{fontWeight: 1000}} color="#32CD32">@{info != undefined ? info:""}</Typography>
                     <Typography variant='h5' align="left">Total number of posts: {posts== undefined ? 0 : posts.length}</Typography>
                 </Grid>
 
