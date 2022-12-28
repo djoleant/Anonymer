@@ -21,7 +21,7 @@ import { Divider, TextField } from "@mui/material";
 import { useTheme } from "@emotion/react";
 import SensorOccupiedIcon from '@mui/icons-material/SensorOccupied';
 
-const pages = ["Feed", "Chat"];
+const pages = ["Feed"];
 
 export const Header = (props) => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
