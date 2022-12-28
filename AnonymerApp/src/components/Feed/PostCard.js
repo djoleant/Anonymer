@@ -112,7 +112,7 @@ export default function PostCard({
             {
                 (time != undefined) ?
                     <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", pl: 11 }}>
-                        <Typography align="right" variant="subtitle2">{"Author: @" + author}</Typography>
+                        <Typography align="right" variant="subtitle2" style={{cursor: "pointer"}} onClick={() => { navigate("/PersonProfile/" + authorID) }}>{"Author: @" + author}</Typography>
                         <Typography align="right" variant="subtitle2">{getDateString(time)}</Typography>
                     </Box>
                     :
