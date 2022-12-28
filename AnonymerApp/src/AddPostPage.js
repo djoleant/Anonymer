@@ -40,7 +40,7 @@ export default function AddPostPagePage(props) {
 
     async function _submitForm(values, actions) {
 
-        const response = await fetch("http://localhost:5222/api/Home/CreatePost/" + content + "/" + "3" + "/" + intQ, {
+        const response = await fetch("http://localhost:5222/api/Home/CreatePost/" + content + "/" + localStorage.getItem("userID") + "/" + intQ, {
             method: "POST",
             credentials: "include",
             headers: {
@@ -59,6 +59,7 @@ export default function AddPostPagePage(props) {
 
     const [categoryData, setCategoryData] = useState([]);
 
+    localStorage.setItem("userID", "3");
     useEffect(() => {
         getCategories();
     }, []);
@@ -147,7 +148,7 @@ export default function AddPostPagePage(props) {
             <br />
             Post successfully created
             <br />
-            <Button variant="contained" href="http://localhost:3000" style={{marginTop:30, backgroundColor:"#f50057"}}>VIEW POST ON PROFILE</Button>
+            <Button variant="contained" href={"http://localhost:3000/PersonProfile/"+localStorage.getItem("userID")} style={{marginTop:30, backgroundColor:"#f50057"}}>VIEW POST ON PROFILE</Button>
         </Typography>
 
     );

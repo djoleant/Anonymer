@@ -456,7 +456,7 @@ export default function App() {
             }
           />
           <Route
-            path="/PersonProfile"
+            path="/PersonProfile/:id"
             element={
               <Header
                 Component={PersonProfilePage}

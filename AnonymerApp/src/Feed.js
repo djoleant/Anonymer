@@ -2,6 +2,7 @@ import { Paper, IconButton, Divider, InputBase, Box, Chip, Container, Grid, CssB
 import { useEffect, useState } from "react";
 import { Menu as MenuIcon, Directions as DirectionsIcon, AddCircle as SearchIcon } from "@mui/icons-material";
 import PostCard from "./components/Feed/PostCard";
+import { NavLink, useNavigate } from 'react-router-dom';
 
 export default function Feed() {
     const [categories, setCategories] = useState([]);
@@ -30,6 +31,8 @@ export default function Feed() {
         const data = await resp.json();
         setUsername(data.username);
     }
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         getCategories();
@@ -99,7 +102,7 @@ export default function Feed() {
                             <Typography variant="h3" sx={{ fontStyle: "italic" }}>{"Welcome, "}</Typography>
                             <Typography variant="h3" sx={{ fontWeight: "1000", ml: 2 }}>{" @" + username + " 😄"}</Typography>
                         </Box >
-                        <Button size="large" variant="outlined" sx={{ mr: 2, mt: 2 }}>Write something </Button>
+                        <Button size="large" variant="outlined" onClick={() => { navigate("/AddPost") }} sx={{ mr: 2, mt: 2 }}>Write something </Button>
                     </Grid>
 
                     {

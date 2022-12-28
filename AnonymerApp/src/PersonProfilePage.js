@@ -12,11 +12,8 @@ import {
     Divider,
     useTheme
 } from '@mui/material';
-import ContactMailIcon from '@mui/icons-material/ContactMail';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from "react-router-dom";
-import AssuredWorkloadIcon from '@mui/icons-material/AssuredWorkload';
-import CardActions from "@mui/material/CardActions";
 
 export default function PersonProfilePage({ type, reloadHeader }) {
 
@@ -57,7 +54,7 @@ export default function PersonProfilePage({ type, reloadHeader }) {
     const { id } = useParams();
 
     const getInfo = async () => {
-        const response = await fetch("http://localhost:5222/api/Home/GetPersonInfo/"+"3");
+        const response = await fetch("http://localhost:5222/api/Home/GetPersonInfo/"+id);
         if (response.ok) {
             const fetchData = await response.json();
             console.log("Info"+fetchData.username)
@@ -68,7 +65,7 @@ export default function PersonProfilePage({ type, reloadHeader }) {
     }
 
     const getPosts = async () => {
-        const response = await fetch("http://localhost:5222/api/Home/GetPersonPosts/"+"3");
+        const response = await fetch("http://localhost:5222/api/Home/GetPersonPosts/"+id);
         if (response.ok) {
             const fetchData = await response.json();
             //console.log(fetchData)
@@ -94,10 +91,12 @@ export default function PersonProfilePage({ type, reloadHeader }) {
             <CssBaseline />
             <Grid container spacing={10}  >
                 <Grid item xs={12} md={10}>
-                    <Typography variant='h3' align="left">{info != undefined ? info:""}</Typography>
+                    <Typography variant='h3' align="left" style={{fontWeight: 1000}}>@{info != undefined ? info:""}</Typography>
+                    <Typography variant='h5' align="left">Total number of posts: {posts== undefined ? 0 : posts.length}</Typography>
                 </Grid>
 
             </Grid>
+            <Divider sx={{ mt: 2, mb: 3 }} >POSTS BY @{info}</Divider>
             <Box >
                 
                 {posts== undefined || posts.length == 0 ? (<Typography>Currently no posts to display</Typography>) : ""}
