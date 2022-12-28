@@ -31,7 +31,6 @@ export default function Feed() {
         setUsername(data.username);
     }
 
-    localStorage.setItem("userID", "2");
     useEffect(() => {
         getCategories();
         getUsername();

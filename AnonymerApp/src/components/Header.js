@@ -19,12 +19,12 @@ import Badge from "@mui/material/Badge";
 import MailIcon from "@mui/icons-material/Mail";
 import Switch from "./ThemeSwitch";
 import { changeTheme } from "../App";
-import { Divider } from "@mui/material";
+import { Divider, TextField } from "@mui/material";
 import { logout } from "../actions/Auth";
 import { useTheme } from "@emotion/react";
+import SensorOccupiedIcon from '@mui/icons-material/SensorOccupied';
 
-const pages = ["Home", "Internships", "Employers", "About"];
-const settings = ["Account", "CV Creator", "CV Export", "Logout", "Admin Dashboard", "Post internship"];
+const pages = ["Feed","Chat"];
 
 export const Header = (props) => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -51,7 +51,6 @@ export const Header = (props) => {
   const navigate = useNavigate();
 
   const [role, setRole] = useState(localStorage.getItem("role"));
-  const [username, setUsername] = useState(localStorage.getItem("username"));
   const [picture, setPicture] = useState(localStorage.getItem("picture"));
 
   const theme = useTheme();
@@ -63,52 +62,24 @@ export const Header = (props) => {
     handleCloseUserMenu();
   }
 
-  const handleMenuClick = async (option) => {
-    console.log(option);
-    if (option === "Logout") {
-      await logout();
-      localStorage.setItem("role", "Guest");
-      reloadHeader();
-      navigate("/SignIn")
-    } else if (option === "Account") {
-      navigate("/MyAccount");
-    }
-    else if (option === "CV Creator") {
-      navigate("/CVCreator")
-    }
-    else if (option === "CV Export") {
-      navigate("/CVGenerator")
-    }
-    else if (option === "Admin Dashboard") {
-      navigate("/AdminDashboard")
-    }
-    else if (option === "Post internship") {
-      navigate("/InternshipCreator");
-    }
+  const getUsername = async () => {
+    if (localStorage.getItem("userID") == undefined)
+      return;
+    const resp = await fetch("http://localhost:5222/api/Home/GetUsername/" + localStorage.getItem("userID"));
+    const data = await resp.json();
+    setUsername(data.username);
   }
+
+  React.useEffect(() => {
+    getUsername();
+  }, []);
+
+  const [username, setUsername] = useState("");
+
+  
   return (
     <React.Fragment>
-      <AppBar sx={{ display: location.pathname.includes("/Chat") ? "none" : "" }} position="sticky">
-        <Container
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <Typography style={{ justifySelf: "center" }}>
-            Runtime Terror stands in solidarity with the Ukrainan people. {"  "}{" "}
-            <Link
-              style={{ color: theme.palette.secondary.main }}
-              href="https://war.ukraine.ua/support-ukraine/"
-            >
-              {" "}
-              Find out how you can help.
-            </Link>
-          </Typography>
-        </Container>
-      </AppBar>
+      
       <AppBar position="sticky">
         <Container maxWidth="xl">
           <Toolbar disableGutters>
@@ -118,7 +89,7 @@ export const Header = (props) => {
               component="div"
               sx={{ mr: 2, display: { xs: "none", md: "flex" } }}
             >
-              InternClix
+              Anonymer
             </Typography>
 
             <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -151,7 +122,7 @@ export const Header = (props) => {
                 }}
               >
                 {pages.map((page) => (
-                  <MenuItem key={page} onClick={() => { navigate("/" + page) }}>
+                  <MenuItem key={page} onClick={() => { navigate("/" + (page=="Feed"?"":page)) }}>
                     <Typography textAlign="center">{page}</Typography>
                   </MenuItem>
                 ))}
@@ -163,13 +134,13 @@ export const Header = (props) => {
               component="div"
               sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}
             >
-              InternClix
+              Anonymer
             </Typography>
             <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
               {pages.map((page) => (
                 <Button
                   key={page}
-                  onClick={() => { navigate("/" + page) }}
+                  onClick={() => { navigate("/" + page=="Feed"?"":page) }}
                   sx={{ my: 2, color: "white", display: "block" }}
                 >
                   {page}
@@ -177,85 +148,60 @@ export const Header = (props) => {
               ))}
             </Box>
 
+            <>
+              <Box sx={{ flexGrow: 0 }}>
+                <Tooltip title="Open settings">
+                  <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+                    <SensorOccupiedIcon />
+                  </IconButton>
+                </Tooltip>
+                <Menu
+                  sx={{ mt: "45px" }}
+                  id="menu-appbar"
+                  anchorEl={anchorElUser}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={Boolean(anchorElUser)}
+                  onClose={handleCloseUserMenu}
+                >
+                  {username != "" ? <MenuItem sx={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+                    <Typography >{"Registered as:"}</Typography>
+                    <Typography sx={{ fontWeight: "bold" }}>{"@" + username}</Typography>
+                  </MenuItem> : <></>}
+                  <Divider sx={{ ml: 1, mr: 1 }} />
 
-            {
-              (role !== "Guest") ?
-                <>
-                  <MenuItem>
-                    <IconButton
-                      size="large"
-                      aria-label="show 4 new mails"
-                      color="inherit"
-                      onClick={() => { navigate("/Chat") }}
-                    >
-                      <MailIcon />
-                    </IconButton>
+                  <MenuItem onClick={() => { }}>
+                    <TextField size="small" label="New username" id="new_username" />
                   </MenuItem>
-
-                  <Box sx={{ flexGrow: 0 }}>
-                    <Tooltip title="Open settings">
-                      <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                        <Avatar alt="Remy Sharp" src={process.env.PUBLIC_URL + "/resources/" + picture} />
-                      </IconButton>
-                    </Tooltip>
-                    <Menu
-                      sx={{ mt: "45px" }}
-                      id="menu-appbar"
-                      anchorEl={anchorElUser}
-                      anchorOrigin={{
-                        vertical: "top",
-                        horizontal: "right",
-                      }}
-                      keepMounted
-                      transformOrigin={{
-                        vertical: "top",
-                        horizontal: "right",
-                      }}
-                      open={Boolean(anchorElUser)}
-                      onClose={handleCloseUserMenu}
-                    >
-                      <MenuItem >
-                        <Typography sx={{ fontWeight: "bold" }}>{username}</Typography>
-                      </MenuItem>
-                      <Divider sx={{ ml: 1, mr: 1 }} />
-                      {settings
-                        .filter((setting) => {
-                          if (role === "Employer") {
-                            return setting !== "CV Creator" && setting != "CV Export" && setting !== "Admin Dashboard";
-                          }
-                          if (role === "Admin") {
-                            return setting !== "CV Creator" && setting != "CV Export" && setting !== "Post internship";
-                          }
-                          if (role === "Student") {
-                            return setting !== "Admin Dashboard" && setting !== "Post internship";
-                          }
-                          return true;
-                        })
-                        .map((setting) => (
-                          <MenuItem key={setting} onClick={() => { handleMenuClick(setting) }}>
-                            <Typography textAlign="center">{setting}</Typography>
-                          </MenuItem>
-                        ))}
-
-                      <MenuItem onClick={ThemeHandler}>
-                        <Switch checked={localStorage.getItem("mode") === "dark"} />
-
-                      </MenuItem>
-                    </Menu>
-                  </Box>
-                </> :
-                <>
-                  <MenuItem onClick={() => { navigate("/SignIn") }}>
-                    <Typography textAlign="center">Sign In</Typography>
+                  <MenuItem onClick={() => { }}>
+                    <Button variant="contained" sx={{ width: "100%" }} onClick={() => {
+                      fetch("http://localhost:5222/api/Home/CreateUser/" + document.getElementById("new_username").value, {
+                        method: "POST"
+                      }).then(r => {
+                        if (r.ok) {
+                          r.json().then(data => {
+                            localStorage.setItem("userID", data.id);
+                            getUsername();
+                          })
+                        }
+                      })
+                    }}>Register</Button>
                   </MenuItem>
-                  <MenuItem onClick={() => { navigate("/Register/student") }}>
-                    <Typography textAlign="center">Register</Typography>
-                  </MenuItem >
                   <MenuItem onClick={ThemeHandler}>
                     <Switch checked={localStorage.getItem("mode") === "dark"} />
+                    <Typography sx={{ ml: 2 }}>{"Change theme"}</Typography>
                   </MenuItem>
-                </>
-            }
+                </Menu>
+              </Box>
+            </>
+
           </Toolbar>
         </Container>
       </AppBar>

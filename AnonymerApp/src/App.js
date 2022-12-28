@@ -36,23 +36,23 @@ const getDesignTokens = (mode) => ({
     mode,
     ...(mode === "light"
       ? {
-          // palette values for light mode
-          primary: {
-            main: "#618fba", //618fba - lepa je
-          },
-          secondary: {
-            main: "#f50057",
-          },
-        }
+        // palette values for light mode
+        primary: {
+          main: "#618fba", //618fba - lepa je
+        },
+        secondary: {
+          main: "#f50057",
+        },
+      }
       : {
-          // palette values for dark mode
-          primary: {
-            main: "#618fba",
-          },
-          secondary: {
-            main: "#f50057",
-          },
-        }),
+        // palette values for dark mode
+        primary: {
+          main: "#618fba",
+        },
+        secondary: {
+          main: "#f50057",
+        },
+      }),
   },
   overrides: {
     MuiSwitch: {
@@ -210,7 +210,7 @@ const themeOptions2 = createTheme({
 const themes = [themeOptions, themeOptions2];
 export let changeTheme;
 
-const ColorModeContext = React.createContext({ toggleColorMode: () => {} });
+const ColorModeContext = React.createContext({ toggleColorMode: () => { } });
 
 export default function App() {
   const [mode, setMode] = React.useState(
@@ -429,7 +429,7 @@ export default function App() {
             }
           />
           <Route
-            path="/Home"
+            path="/Feed"
             element={
               <Header
                 Component={Feed}
