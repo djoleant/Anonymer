@@ -120,7 +120,7 @@ namespace Anonymer.Controllers
         [Route("Upvote/{postID}/{userID}")]
         public IActionResult Upvote(string postID, string userID)
         {
-            if(redis.SetContainsItem("post:" + postID + ":upvotes",userID))
+            if (redis.SetContainsItem("post:" + postID + ":upvotes", userID))
                 return BadRequest();
             var result = redis.Get<Post>("post:" + postID + ":post");
             result.Upvotes++;
@@ -135,7 +135,7 @@ namespace Anonymer.Controllers
         [Route("Downvote/{postID}/{userID}")]
         public IActionResult Downvote(string postID, string userID)
         {
-            if(redis.SetContainsItem("post:" + postID + ":downvotes",userID))
+            if (redis.SetContainsItem("post:" + postID + ":downvotes", userID))
                 return BadRequest();
             var result = redis.Get<Post>("post:" + postID + ":post");
             result.Downvotes++;
@@ -173,6 +173,17 @@ namespace Anonymer.Controllers
             {
                 upvoted = redis.SetContainsItem("post:" + postID + ":upvotes", userID),
                 downvoted = redis.SetContainsItem("post:" + postID + ":downvotes", userID)
+            });
+        }
+
+        [HttpGet]
+        [Route("HasUserVotedComment/{userID}/{commentID}")]
+        public IActionResult HasUserVotedComment(string userID, string commentID)
+        {
+            return Ok(new
+            {
+                upvoted = redis.SetContainsItem("comment:" + commentID + ":upvotes", userID),
+                downvoted = redis.SetContainsItem("comment:" + commentID + ":downvotes", userID)
             });
         }
 
@@ -308,7 +319,7 @@ namespace Anonymer.Controllers
         [Route("UpvoteComment/{commentID}/{userID}")]
         public IActionResult UpvoteComment(string commentID, string userID)
         {
-            if(redis.SetContainsItem("comment:" + commentID + ":upvotes",userID))
+            if (redis.SetContainsItem("comment:" + commentID + ":upvotes", userID))
                 return BadRequest();
             var result = redis.Get<Comment>("comment:" + commentID + ":comment");
             result.Upvotes++;
@@ -321,7 +332,7 @@ namespace Anonymer.Controllers
         [Route("DownvoteComment/{commentID}/{userID}")]
         public IActionResult DownvoteComment(string commentID, string userID)
         {
-            if(redis.SetContainsItem("comment:" + commentID + ":downvotes",userID))
+            if (redis.SetContainsItem("comment:" + commentID + ":downvotes", userID))
                 return BadRequest();
             var result = redis.Get<Comment>("comment:" + commentID + ":comment");
             result.Downvotes++;

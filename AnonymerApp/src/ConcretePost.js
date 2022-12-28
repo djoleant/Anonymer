@@ -20,10 +20,11 @@ import {
   AddCircle as SearchIcon,
   CoPresent,
 } from "@mui/icons-material";
-import PostCard from "./components/Feed/PostCard";
+import PostCard from "./components/ConcretePost/PostCard";
 import { useParams } from "react-router-dom";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import CommentCard from "./components/ConcretePost/CommentCard";
 
 export default function ConcretePost({
   text = "Text...",
@@ -39,14 +40,29 @@ export default function ConcretePost({
     downvoted: false,
   });
 
+  const [hasUpVotedComment, setHasUpVotedComment] = useState([
+    {
+      id: "",
+      voted: "",
+    },
+  ]);
+  const [hasDownVotedComment, setHasDownVotedComment] = useState([
+    {
+      id: "",
+      voted: "",
+    },
+  ]);
+
   const [author, setAuthor] = useState("");
   const [upvotes, setUpvotes] = useState(postUpvotes);
   const [downvotes, setDownvotes] = useState(postDownvotes);
   const [comments, setComments] = useState([]);
+  const [newComment, setNewComment] = useState([]);
 
   const { id } = useParams();
 
-  const [post, setPost] = useState(null/*{
+  const [post, setPost] = useState(
+    null /*{
     id: "",
     authorID: "",
     categoryID: "",
@@ -54,14 +70,15 @@ export default function ConcretePost({
     time: "",
     upvotes: 0,
     downvotes: 0,
-  }*/);
+  }*/
+  );
 
   const getUserPostInfo = async () => {
     const resp = await fetch(
       "http://localhost:5222/api/Home/HasUserVoted/" +
-      localStorage.getItem("userID") +
-      "/" +
-      id
+        localStorage.getItem("userID") +
+        "/" +
+        id
     );
     const data = await resp.json();
     setHasVoted(data);
@@ -77,6 +94,7 @@ export default function ConcretePost({
     console.log(comments);
   };
 
+
   const getPost = async () => {
     const resp = await fetch("http://localhost:5222/api/Home/GetPost/" + id);
     const data = await resp.json();
@@ -87,9 +105,9 @@ export default function ConcretePost({
   const upvote = async () => {
     const resp = await fetch(
       "http://localhost:5222/api/Home/Upvote/" +
-      id +
-      "/" +
-      localStorage.getItem("userID"),
+        id +
+        "/" +
+        localStorage.getItem("userID"),
       {
         method: "PUT",
       }
@@ -99,6 +117,7 @@ export default function ConcretePost({
       getUserPostInfo();
     }
   };
+
 
   const getAuthor = async () => {
     const resp = await fetch(
@@ -112,9 +131,9 @@ export default function ConcretePost({
   const downvote = async () => {
     const resp = await fetch(
       "http://localhost:5222/api/Home/Downvote/" +
-      id +
-      "/" +
-      localStorage.getItem("userID"),
+        id +
+        "/" +
+        localStorage.getItem("userID"),
       {
         method: "PUT",
       }
@@ -124,6 +143,38 @@ export default function ConcretePost({
       getUserPostInfo();
     }
   };
+
+  const handleChange = async (event) => {
+    setNewComment(event.target.value)
+
+  };
+
+  async function _submitForm(values, actions) {
+    const response = await fetch(
+      "http://localhost:5222/api/Home/AddComment/" +
+        newComment +
+        "/" +
+        localStorage.getItem("userID") +
+        "/" +
+        id,
+      {
+        method: "POST",
+        credentials: "include",
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    
+    getComments();
+
+    if (response.ok) {
+      const data = await response.json();
+      // setSubmitted("yes");
+      getComments();
+    }
+  }
 
   //localStorage.setItem("userID", "2");
   useEffect(() => {
@@ -163,71 +214,38 @@ export default function ConcretePost({
             </Box>
 
             {
-              // ovde turi upw i dwnvt
-              //   <Grid item xs={1} sx={{ display: "flex" }}>
-              //     <Box
-              //       sx={{
-              //         display: "flex",
-              //         flexDirection: "row",
-              //         alignItems: "center",
-              //       }}
-              //     >
-              //       <IconButton
-              //         sx={{ width: "40px" }}
-              //         onClick={() => {
-              //           upvote();
-              //         }}
-              //       >
-              //         <ArrowUpwardIcon
-              //           color={hasVoted.upvoted ? "success" : "disabled"}
-              //         />
-              //       </IconButton>
-              //       <Typography align="right" variant="subtitle2">
-              //         {upvotes}
-              //       </Typography>
-              //       <IconButton
-              //         sx={{ width: "40px" }}
-              //         onClick={() => {
-              //           downvote();
-              //         }}
-              //       >
-              //         <ArrowDownwardIcon
-              //           color={hasVoted.downvoted ? "error" : "disabled"}
-              //         />
-              //       </IconButton>
-              //       <Typography align="right" variant="subtitle2">
-              //         {downvotes}
-              //       </Typography>
-              //       <IconButton sx={{ width: "40px" }}></IconButton>
-              //     </Box>
-              //   </Grid>
+
             }
           </Grid>
 
           {
-            post!=null?
-            <Grid item xs={12} key={id}>
-              <PostCard
-                text={post.text}
-                time={post.time}
-                authorID={post.authorID}
-                postUpvotes={post.upvotes}
-                postDownvotes={post.downvotes}
-                postID={post.id}
-              />
-            </Grid>:<></>
+            post != null ? (
+              <Grid item xs={12} key={id}>
+                <PostCard
+                  text={post.text}
+                  time={post.time}
+                  authorID={post.authorID}
+                  postUpvotes={post.upvotes}
+                  postDownvotes={post.downvotes}
+                  postID={post.id}
+                />
+              </Grid>
+            ) : (
+              <></>
+            )
             //ovde ide post
           }
         </Grid>
         <Divider style={{ marginTop: 20 }}></Divider>
         <Input
+          onChange={handleChange}
           sx={{ ml: 5, mt: 2.5, fontSize: "14px" }}
           placeholder="Comment... ✒️"
           inputProps={{ "aria-label": "search google maps" }}
           size="big"
           id="new_category_input"
         />
-        <IconButton color="secondary" aria-label="add an alarm">
+        <IconButton onClick={_submitForm} color="secondary" aria-label="add an alarm">
           <AddIcon />
         </IconButton>
         <Divider style={{ marginTop: 20 }}></Divider>
@@ -241,7 +259,7 @@ export default function ConcretePost({
             <Grid
               container
               spacing={2}
-            /*xs={12} md={6} lg={6}*/
+              /*xs={12} md={6} lg={6}*/
             >
               {comments
                 //.filter(c => c.title.toLowerCase().includes(search.toLowerCase()))
@@ -257,74 +275,84 @@ export default function ConcretePost({
                   } = card;
                   console.log(card);
                   return (
-                    <Grid
-                      container
-                      style={{
-                        display: "flex",
-                        flexDirection: "column",
-                        marginBottom: 20,
-                        alignItems: "center",
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          display: "flex",
-                          flexDirection: "row",
-                          alignItems: "center",
-                          justifyContent: "center"
-                        }}
-                      >
-                        <IconButton
-                          sx={{ width: "40px" }}
-                          onClick={() => {
-                            upvote();
-                          }}
-                        >
-                          <ArrowUpwardIcon
-                            color={hasVoted.upvoted ? "success" : "disabled"}
-                          />
-                        </IconButton>
-                        <Typography align="right" variant="subtitle2">
-                          {upvotes}
-                        </Typography>
-                        <IconButton
-                          sx={{ width: "40px" }}
-                          onClick={() => {
-                            downvote();
-                          }}
-                        >
-                          <ArrowDownwardIcon
-                            color={hasVoted.downvoted ? "error" : "disabled"}
-                          />
-                        </IconButton>
-                        <Typography align="right" variant="subtitle2">
-                          {downvotes}
-                        </Typography>
+                    <CommentCard
+                      id={card.id}
+                      authorID={card.authorID}
+                      text={card.text}
+                      commentUpvotes={card.upvotes}
+                      commentDownvotes={card.downvotes}
+                      time={card.time}
+                    />
+                    // <Grid
+                    //   container
+                    //   style={{
+                    //     display: "flex",
+                    //     flexDirection: "column",
+                    //     marginBottom: 20,
+                    //     alignItems: "center",
+                    //   }}
+                    // >
+                    //   <Box
+                    //     sx={{
+                    //       display: "flex",
+                    //       flexDirection: "row",
+                    //       alignItems: "center",
+                    //       justifyContent: "center"
+                    //     }}
+                    //   >
+                    //     <IconButton
+                    //       sx={{ width: "40px" }}
+                    //       onClick={() => {
+                    //         upvoteComment(id);
+                    //         setHasUpVotedComment(id);
+                    //       }}
+                    //     >
+                    //       <ArrowUpwardIcon
+                    //         color={hasUpVotedComment[id] ? "success" : "disabled"}
+                    //       />
+                    //     </IconButton>
+                    //     <Typography align="right" variant="subtitle2">
+                    //       {upvotes}
+                    //     </Typography>
+                    //     <IconButton
+                    //       sx={{ width: "40px" }}
+                    //       onClick={() => {
+                    //         downvoteComment(id);
+                    //         setHasDownVotedComment(id);
+                    //       }}
+                    //     >
+                    //       <ArrowDownwardIcon
+                    //         color={hasDownVotedComment[id] ? "error" : "disabled"}
+                    //       />
+                    //     </IconButton>
+                    //     <Typography align="right" variant="subtitle2">
+                    //       {downvotes}
+                    //     </Typography>
 
-                      </Box>
-                      <Grid
-                        container
-                        style={{
-                          display: "flex",
-                          flexDirection: "column",
-                          marginBottom: 20,
-                        }}
-                      >
-                        <Typography
-                          style={{
-                            textAlign: "center",
-                            marginLeft: 20,
-                            fontSize: 20,
-                            cursor: "pointer",
-                          }}
-                        >
-                          {card.text}
-                        </Typography>
-                        <Typography> {card.time.substring(11, 16)}</Typography>
-                        <Typography> {card.time.substring(0, 10)}</Typography>
-                        <Divider style={{ marginTop: 20 }}></Divider>
-                      </Grid>
-                    </Grid>
+                    //   </Box>
+                    //   <Grid
+                    //     container
+                    //     style={{
+                    //       display: "flex",
+                    //       flexDirection: "column",
+                    //       marginBottom: 20,
+                    //     }}
+                    //   >
+                    //     <Typography
+                    //       style={{
+                    //         textAlign: "center",
+                    //         marginLeft: 20,
+                    //         fontSize: 20,
+                    //         cursor: "pointer",
+                    //       }}
+                    //     >
+                    //       {card.text}
+                    //     </Typography>
+                    //     <Typography> {card.time.substring(11, 16)}</Typography>
+                    //     <Typography> {card.time.substring(0, 10)}</Typography>
+                    //     <Divider style={{ marginTop: 20 }}></Divider>
+                    //   </Grid>
+                    // </Grid>
                   );
                 })}
             </Grid>
