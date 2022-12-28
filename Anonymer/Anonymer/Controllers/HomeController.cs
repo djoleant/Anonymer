@@ -81,6 +81,7 @@ namespace Anonymer.Controllers
                 CategoryID = categoryID
             };
             redis.PushItemToList("category:" + categoryID + ":posts", id);
+            redis.AddItemToSortedSet("category:" + categoryID + ":postssorted", id, 0);
             redis.PushItemToList("person:" + authorID + ":posts", id);
             redis.Set("post:" + id + ":post", post);
             return Ok(new { post });
@@ -119,10 +120,14 @@ namespace Anonymer.Controllers
         [Route("Upvote/{postID}/{userID}")]
         public IActionResult Upvote(string postID, string userID)
         {
+            if(redis.SetContainsItem("post:" + postID + ":upvotes",userID))
+                return BadRequest();
             var result = redis.Get<Post>("post:" + postID + ":post");
             result.Upvotes++;
             redis.Set("post:" + postID + ":post", result);
             redis.AddItemToSet("post:" + postID + ":upvotes", userID);
+            redis.RemoveItemFromSortedSet("category:" + result.CategoryID + ":postssorted", postID);
+            redis.AddItemToSortedSet("category:" + result.CategoryID + ":postssorted", postID, result.Upvotes - result.Downvotes);
             return Ok();
         }
 
@@ -130,10 +135,14 @@ namespace Anonymer.Controllers
         [Route("Downvote/{postID}/{userID}")]
         public IActionResult Downvote(string postID, string userID)
         {
+            if(redis.SetContainsItem("post:" + postID + ":downvotes",userID))
+                return BadRequest();
             var result = redis.Get<Post>("post:" + postID + ":post");
             result.Downvotes++;
             redis.Set("post:" + postID + ":post", result);
             redis.AddItemToSet("post:" + postID + ":downvotes", userID);
+            redis.RemoveItemFromSortedSet("category:" + result.CategoryID + ":postssorted", postID);
+            redis.AddItemToSortedSet("category:" + result.CategoryID + ":postssorted", postID, result.Upvotes - result.Downvotes);
             return Ok();
         }
 
@@ -231,6 +240,20 @@ namespace Anonymer.Controllers
             return Ok(new { posts });
         }
 
+        [HttpGet]
+        [Route("GetCategoryPostsSorted/{categoryID}")]
+        public IActionResult GetCategoryPostsSorted(string categoryID)
+        {
+            var postIDs = redis.GetAllItemsFromSortedSetDesc("category:" + categoryID + ":postssorted");
+            var posts = new List<Post>();
+            foreach (var id in postIDs)
+            {
+                var post = redis.Get<Post>("post:" + id + ":post");
+                posts.Add(post);
+            }
+            return Ok(new { posts });
+        }
+
         [HttpDelete]
         [Route("DeletePost/{postID}")]
         public IActionResult DeletePost(string postID)
@@ -285,6 +308,8 @@ namespace Anonymer.Controllers
         [Route("UpvoteComment/{commentID}/{userID}")]
         public IActionResult UpvoteComment(string commentID, string userID)
         {
+            if(redis.SetContainsItem("comment:" + commentID + ":upvotes",userID))
+                return BadRequest();
             var result = redis.Get<Comment>("comment:" + commentID + ":comment");
             result.Upvotes++;
             redis.Set("comment:" + commentID + ":comment", result);
@@ -296,6 +321,8 @@ namespace Anonymer.Controllers
         [Route("DownvoteComment/{commentID}/{userID}")]
         public IActionResult DownvoteComment(string commentID, string userID)
         {
+            if(redis.SetContainsItem("comment:" + commentID + ":downvotes",userID))
+                return BadRequest();
             var result = redis.Get<Comment>("comment:" + commentID + ":comment");
             result.Downvotes++;
             redis.Set("comment:" + commentID + ":comment", result);
@@ -382,7 +409,7 @@ namespace Anonymer.Controllers
         [Route("SubijemCitanje/{key}")]
         public async Task<IActionResult> SubijemCitanje(string key)
         {
-            var result = redis.Get<string>(key);
+            var result = redis.Get<object>(key);
             return Ok(result);
         }
 

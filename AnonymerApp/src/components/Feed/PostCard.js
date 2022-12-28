@@ -45,8 +45,9 @@ export default function PostCard({
             method: "PUT"
         });
         if (resp.ok) {
-            setUpvotes(upvotes + 1);
+            //setUpvotes(upvotes + 1);
             getUserPostInfo();
+            getPostInfo();
         }
     }
 
@@ -55,8 +56,9 @@ export default function PostCard({
             method: "PUT"
         });
         if (resp.ok) {
-            setDownvotes(downvotes + 1);
+            //setDownvotes(downvotes + 1);
             getUserPostInfo();
+            getPostInfo();
         }
     }
 
@@ -71,6 +73,12 @@ export default function PostCard({
         getAuthor();
         getPostInfo();
     }, []);
+
+    useEffect(() => {
+        getUserPostInfo();
+        getAuthor();
+        getPostInfo();
+    }, [text]);
 
     const [hasVoted, setHasVoted] = useState({ upvoted: false, downvoted: false });
     const [author, setAuthor] = useState("");
@@ -92,14 +100,14 @@ export default function PostCard({
                         <Typography align="right" variant="subtitle2">{postInfo.upvotes}</Typography>
                         <IconButton
                             sx={{ width: "40px" }}
-                            onClick={() => { downvote();getPostInfo(); }}
+                            onClick={() => { downvote(); getPostInfo(); }}
                         >
                             <ArrowDownwardIcon color={hasVoted.downvoted ? "error" : "disabled"} />
                         </IconButton>
                         <Typography align="right" variant="subtitle2">{postInfo.downvotes}</Typography>
                         <IconButton
                             sx={{ width: "40px" }}
-                            
+
                         >
                             <CommentIcon />
                         </IconButton>
@@ -120,7 +128,7 @@ export default function PostCard({
             {
                 (time != undefined) ?
                     <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between", pl: 11 }}>
-                        <Typography align="right" variant="subtitle2" style={{cursor: "pointer"}} onClick={() => { navigate("/PersonProfile/" + authorID) }}>{"Author: @" + author}</Typography>
+                        <Typography align="right" variant="subtitle2" style={{ cursor: "pointer" }} onClick={() => { navigate("/PersonProfile/" + authorID) }}>{"Author: @" + author}</Typography>
                         <Typography align="right" variant="subtitle2">{getDateString(time)}</Typography>
                     </Box>
                     :

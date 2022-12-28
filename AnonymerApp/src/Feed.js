@@ -19,11 +19,13 @@ export default function Feed() {
         }
     }
 
-    const getPosts = async (categoryID) => {
-        const result = await fetch("http://localhost:5222/api/Home/GetCategoryPosts/" + categoryID);
+    const getPosts = async (categoryID, postreq = "GetCategoryPosts/") => {
+        console.log("http://localhost:5222/api/Home/" + postreq + categoryID)
+        const result = await fetch("http://localhost:5222/api/Home/" + postreq + categoryID);
         const data = await result.json();
+        setPosts([]);
         setPosts(data.posts);
-        console.log(posts);
+        console.log(data.posts);
     }
 
     const getUsername = async () => {
@@ -40,6 +42,7 @@ export default function Feed() {
     }, []);
 
     const [username, setUsername] = useState("");
+    const [sorted, setSorted] = useState(false);
 
     return (
         <>
@@ -103,6 +106,10 @@ export default function Feed() {
                             <Typography variant="h3" sx={{ fontWeight: "1000", ml: 2 }}>{" @" + username + " 😄"}</Typography>
                         </Box >
                         <Button size="large" variant="outlined" onClick={() => { navigate("/AddPost") }} sx={{ mr: 2, mt: 2 }}>Write something </Button>
+                        <Button size="large" variant={sorted ? "contained" : "outlined"} onClick={() => {
+                            getPosts(selectedCategory, sorted ? "GetCategoryPosts/" : "GetCategoryPostsSorted/");
+                            setSorted(!sorted);
+                        }} sx={{ mr: 2, mt: 2 }}>{"Sort by " + (sorted ? "date" : "popularity")} </Button>
                     </Grid>
 
                     {
@@ -113,8 +120,7 @@ export default function Feed() {
                                         text={post.text}
                                         time={post.time}
                                         authorID={post.authorID}
-                                        postUpvotes={post.upvotes}
-                                        postDownvotes={post.downvotes}
+
                                         postID={post.id}
                                     />
                                 </Grid>
