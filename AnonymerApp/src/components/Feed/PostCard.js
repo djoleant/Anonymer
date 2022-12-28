@@ -101,7 +101,9 @@ export default function PostCard({
                         <Typography align="right" variant="subtitle2">{postInfo.downvotes}</Typography>
                         <IconButton
                             sx={{ width: "40px" }}
-
+                            onClick= {
+                                () => {navigate("/Post/" + postID)}
+                            }
                         >
                             <CommentIcon />
                         </IconButton>

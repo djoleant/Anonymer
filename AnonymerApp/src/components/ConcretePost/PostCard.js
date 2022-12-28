@@ -7,11 +7,13 @@ import {
   IconButton,
   Avatar,
 } from "@mui/material";
-import { Navigate, redirect, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import Delete from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import EditPost from "./EditPost";
 
 export default function PostCard({
   text = "Text...",
@@ -23,6 +25,8 @@ export default function PostCard({
   postID,
 }) {
   const navigate = useNavigate();
+
+
 
   const getDateString = (time) => {
     const date = new Date(time);
@@ -100,7 +104,21 @@ export default function PostCard({
         method: "DELETE",
       }
     );
+    navigate("/Feed");
+  };
 
+  const update = () => {
+    getPostInfo();
+  };
+
+  const editPost = async () => {
+    const resp = await fetch(
+      "http://localhost:5222/api/Home/EditPost/" + postID + "/" + editText,
+      {
+        method: "PUT",
+      }
+    );
+    navigate("/Feed");
   };
 
   const getPostInfo = async () => {
@@ -109,6 +127,7 @@ export default function PostCard({
     );
     const data = await resp.json();
     setPostInfo(data.post);
+    setShowText(data.post.text);
   };
 
   useEffect(() => {
@@ -123,16 +142,18 @@ export default function PostCard({
     getPostInfo();
   }, [text]);
 
-  const [deleted, setDeleted] = useState(false)
+  const [deleted, setDeleted] = useState(false);
 
   const [hasVoted, setHasVoted] = useState({
     upvoted: false,
     downvoted: false,
   });
   const [author, setAuthor] = useState("");
+  const [editText, setEditText] = useState("");
   const [upvotes, setUpvotes] = useState(postUpvotes);
   const [downvotes, setDownvotes] = useState(postDownvotes);
   const [postInfo, setPostInfo] = useState({ upvotes: 0, downvotes: 0 });
+  const [showText, setShowText] = useState(text);
 
   return (
     <Card variant="outlined" sx={{ p: 3, maxWidth: maxWidth }}>
@@ -181,12 +202,13 @@ export default function PostCard({
             >
               <Delete />
             </IconButton>
+            <EditPost currentText={text} update={update} id={postID} />
           </Box>
         </Grid>
         <Grid container item xs={11}>
           <Grid item xs={12}>
             <Typography variant="h5" align="left">
-              {text}
+              {showText}
             </Typography>
           </Grid>
         </Grid>

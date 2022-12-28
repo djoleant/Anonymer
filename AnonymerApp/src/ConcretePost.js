@@ -94,12 +94,12 @@ export default function ConcretePost({
     console.log(comments);
   };
 
-
   const getPost = async () => {
     const resp = await fetch("http://localhost:5222/api/Home/GetPost/" + id);
     const data = await resp.json();
     setPost(data.post);
     console.log("Post je: ", data.post);
+    getAuthor(data.post.authorID);
   };
 
   const upvote = async () => {
@@ -118,10 +118,9 @@ export default function ConcretePost({
     }
   };
 
-
-  const getAuthor = async () => {
+  const getAuthor = async (authorID) => {
     const resp = await fetch(
-      "http://localhost:5222/api/Home/GetUsername/" + post.authorID
+      "http://localhost:5222/api/Home/GetUsername/" + authorID
     );
     const data = await resp.json();
     setAuthor(data.username);
@@ -145,8 +144,7 @@ export default function ConcretePost({
   };
 
   const handleChange = async (event) => {
-    setNewComment(event.target.value)
-
+    setNewComment(event.target.value);
   };
 
   async function _submitForm(values, actions) {
@@ -166,7 +164,7 @@ export default function ConcretePost({
         },
       }
     );
-    
+
     getComments();
 
     if (response.ok) {
@@ -179,7 +177,6 @@ export default function ConcretePost({
   //localStorage.setItem("userID", "2");
   useEffect(() => {
     getPost();
-    getAuthor();
     getComments();
   }, []);
 
@@ -213,9 +210,7 @@ export default function ConcretePost({
               </Typography>
             </Box>
 
-            {
-
-            }
+            {}
           </Grid>
 
           {
@@ -237,15 +232,20 @@ export default function ConcretePost({
           }
         </Grid>
         <Divider style={{ marginTop: 20 }}></Divider>
-        <Input
+        <TextField
           onChange={handleChange}
           sx={{ ml: 5, mt: 2.5, fontSize: "14px" }}
           placeholder="Comment... ✒️"
           inputProps={{ "aria-label": "search google maps" }}
           size="big"
           id="new_category_input"
+          fullWidth
         />
-        <IconButton onClick={_submitForm} color="secondary" aria-label="add an alarm">
+        <IconButton
+          onClick={_submitForm}
+          color="secondary"
+          aria-label="add an alarm"
+        >
           <AddIcon />
         </IconButton>
         <Divider style={{ marginTop: 20 }}></Divider>
