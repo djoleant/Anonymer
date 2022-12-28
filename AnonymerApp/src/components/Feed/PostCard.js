@@ -60,15 +60,23 @@ export default function PostCard({
         }
     }
 
+    const getPostInfo = async () => {
+        const resp = await fetch("http://localhost:5222/api/Home/GetPost/" + postID);
+        const data = await resp.json();
+        setPostInfo(data.post)
+    }
+
     useEffect(() => {
         getUserPostInfo();
         getAuthor();
+        getPostInfo();
     }, []);
 
     const [hasVoted, setHasVoted] = useState({ upvoted: false, downvoted: false });
     const [author, setAuthor] = useState("");
     const [upvotes, setUpvotes] = useState(postUpvotes);
     const [downvotes, setDownvotes] = useState(postDownvotes);
+    const [postInfo, setPostInfo] = useState({ upvotes: 0, downvotes: 0 });
 
     return (
         <Card variant="outlined" sx={{ p: 3, maxWidth: maxWidth }}>
@@ -77,18 +85,18 @@ export default function PostCard({
                     <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center" }}>
                         <IconButton
                             sx={{ width: "40px" }}
-                            onClick={() => { upvote() }}
+                            onClick={() => { upvote(); getPostInfo(); }}
                         >
                             <ArrowUpwardIcon color={hasVoted.upvoted ? "success" : "disabled"} />
                         </IconButton>
-                        <Typography align="right" variant="subtitle2">{upvotes}</Typography>
+                        <Typography align="right" variant="subtitle2">{postInfo.upvotes}</Typography>
                         <IconButton
                             sx={{ width: "40px" }}
-                            onClick={() => { downvote() }}
+                            onClick={() => { downvote();getPostInfo(); }}
                         >
                             <ArrowDownwardIcon color={hasVoted.downvoted ? "error" : "disabled"} />
                         </IconButton>
-                        <Typography align="right" variant="subtitle2">{downvotes}</Typography>
+                        <Typography align="right" variant="subtitle2">{postInfo.downvotes}</Typography>
                         <IconButton
                             sx={{ width: "40px" }}
                             

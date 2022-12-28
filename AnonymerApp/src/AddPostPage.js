@@ -59,7 +59,7 @@ export default function AddPostPagePage(props) {
 
     const [categoryData, setCategoryData] = useState([]);
 
-    localStorage.setItem("userID", "3");
+    //localStorage.setItem("userID", "3");
     useEffect(() => {
         getCategories();
     }, []);

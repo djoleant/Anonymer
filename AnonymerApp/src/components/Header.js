@@ -122,7 +122,7 @@ export const Header = (props) => {
                 }}
               >
                 {pages.map((page) => (
-                  <MenuItem key={page} onClick={() => { navigate("/" + (page=="Feed"?"":page)) }}>
+                  <MenuItem key={page} onClick={() => { navigate("/Feed") }}>
                     <Typography textAlign="center">{page}</Typography>
                   </MenuItem>
                 ))}
@@ -140,7 +140,7 @@ export const Header = (props) => {
               {pages.map((page) => (
                 <Button
                   key={page}
-                  onClick={() => { navigate("/" + page=="Feed"?"":page) }}
+                  onClick={() => { navigate("/Feed") }}
                   sx={{ my: 2, color: "white", display: "block" }}
                 >
                   {page}

@@ -49,7 +49,7 @@ export default function PersonProfilePage({ type, reloadHeader }) {
 
     const [info, setInfo] = useState(null);
 
-    const [posts, setPosts] = useState(null);
+    const [posts, setPosts] = useState([]);
 
     const { id } = useParams();
 

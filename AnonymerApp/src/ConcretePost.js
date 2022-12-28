@@ -20,7 +20,7 @@ import {
   AddCircle as SearchIcon,
   CoPresent,
 } from "@mui/icons-material";
-import PostCard from "./components/ConcretePost/PostCard";
+import PostCard from "./components/Feed/PostCard";
 import { useParams } from "react-router-dom";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
@@ -46,7 +46,7 @@ export default function ConcretePost({
 
   const { id } = useParams();
 
-  const [post, setPost] = useState({
+  const [post, setPost] = useState(null/*{
     id: "",
     authorID: "",
     categoryID: "",
@@ -54,14 +54,14 @@ export default function ConcretePost({
     time: "",
     upvotes: 0,
     downvotes: 0,
-  });
+  }*/);
 
   const getUserPostInfo = async () => {
     const resp = await fetch(
       "http://localhost:5222/api/Home/HasUserVoted/" +
-        localStorage.getItem("userID") +
-        "/" +
-        id
+      localStorage.getItem("userID") +
+      "/" +
+      id
     );
     const data = await resp.json();
     setHasVoted(data);
@@ -81,15 +81,15 @@ export default function ConcretePost({
     const resp = await fetch("http://localhost:5222/api/Home/GetPost/" + id);
     const data = await resp.json();
     setPost(data.post);
-    console.log("Post je: ", post);
+    console.log("Post je: ", data.post);
   };
 
   const upvote = async () => {
     const resp = await fetch(
       "http://localhost:5222/api/Home/Upvote/" +
-        id +
-        "/" +
-        localStorage.getItem("userID"),
+      id +
+      "/" +
+      localStorage.getItem("userID"),
       {
         method: "PUT",
       }
@@ -112,9 +112,9 @@ export default function ConcretePost({
   const downvote = async () => {
     const resp = await fetch(
       "http://localhost:5222/api/Home/Downvote/" +
-        id +
-        "/" +
-        localStorage.getItem("userID"),
+      id +
+      "/" +
+      localStorage.getItem("userID"),
       {
         method: "PUT",
       }
@@ -125,7 +125,7 @@ export default function ConcretePost({
     }
   };
 
-  localStorage.setItem("userID", "2");
+  //localStorage.setItem("userID", "2");
   useEffect(() => {
     getPost();
     getAuthor();
@@ -205,6 +205,7 @@ export default function ConcretePost({
           </Grid>
 
           {
+            post!=null?
             <Grid item xs={12} key={id}>
               <PostCard
                 text={post.text}
@@ -214,7 +215,7 @@ export default function ConcretePost({
                 postDownvotes={post.downvotes}
                 postID={post.id}
               />
-            </Grid>
+            </Grid>:<></>
             //ovde ide post
           }
         </Grid>
@@ -240,7 +241,7 @@ export default function ConcretePost({
             <Grid
               container
               spacing={2}
-              /*xs={12} md={6} lg={6}*/
+            /*xs={12} md={6} lg={6}*/
             >
               {comments
                 //.filter(c => c.title.toLowerCase().includes(search.toLowerCase()))
@@ -270,6 +271,7 @@ export default function ConcretePost({
                           display: "flex",
                           flexDirection: "row",
                           alignItems: "center",
+                          justifyContent: "center"
                         }}
                       >
                         <IconButton
@@ -298,7 +300,7 @@ export default function ConcretePost({
                         <Typography align="right" variant="subtitle2">
                           {downvotes}
                         </Typography>
-                        <IconButton sx={{ width: "40px" }}></IconButton>
+
                       </Box>
                       <Grid
                         container

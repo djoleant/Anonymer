@@ -87,7 +87,7 @@ namespace Anonymer.Controllers
         }
 
         [HttpPost]
-        [Route("AddComment/{text}/{authorID}/{postID}")] 
+        [Route("AddComment/{text}/{authorID}/{postID}")]
         public IActionResult AddComment(string text, string authorID, string postID)
         {
             string id = GetNextCommentID();
@@ -122,7 +122,7 @@ namespace Anonymer.Controllers
             var result = redis.Get<Post>("post:" + postID + ":post");
             result.Upvotes++;
             redis.Set("post:" + postID + ":post", result);
-            redis.PushItemToList("post:" + postID + ":upvotes", userID);
+            redis.AddItemToSet("post:" + postID + ":upvotes", userID);
             return Ok();
         }
 
@@ -133,7 +133,7 @@ namespace Anonymer.Controllers
             var result = redis.Get<Post>("post:" + postID + ":post");
             result.Downvotes++;
             redis.Set("post:" + postID + ":post", result);
-            redis.PushItemToList("post:" + postID + ":downvotes", userID);
+            redis.AddItemToSet("post:" + postID + ":downvotes", userID);
             return Ok();
         }
 
@@ -142,8 +142,8 @@ namespace Anonymer.Controllers
         public IActionResult GetPost(string postID)
         {
             var post = redis.Get<Post>("post:" + postID + ":post");
-            var upvotes = redis.GetAllItemsFromList("post:" + postID + ":upvotes");
-            var downvotes = redis.GetAllItemsFromList("post:" + postID + ":downvotes");
+            var upvotes = redis.GetAllItemsFromSet("post:" + postID + ":upvotes");
+            var downvotes = redis.GetAllItemsFromSet("post:" + postID + ":downvotes");
             return Ok(new { post, upvotes, downvotes });
         }
 
@@ -152,36 +152,38 @@ namespace Anonymer.Controllers
         public IActionResult GetPersonUsername(string personID)
         {
             var username = redis.Get<string>("person:" + personID + ":username");
-           
+
             return Ok(new { username });
         }
 
         [HttpGet]
         [Route("HasUserVoted/{userID}/{postID}")]
-        public IActionResult HasUserVoted(string userID,string postID)
+        public IActionResult HasUserVoted(string userID, string postID)
         {
-            var upvotes = redis.GetAllItemsFromList("post:" + postID + ":upvotes");
-            var downvotes = redis.GetAllItemsFromList("post:" + postID + ":downvotes");
-            return Ok(new { upvoted=upvotes.Contains(userID),downvoted=downvotes.Contains(userID) });
+            return Ok(new
+            {
+                upvoted = redis.SetContainsItem("post:" + postID + ":upvotes", userID),
+                downvoted = redis.SetContainsItem("post:" + postID + ":downvotes", userID)
+            });
         }
 
         [HttpGet]
         [Route("GetUsername/{userID}")]
         public IActionResult GetUsername(string userID)
         {
-            
-            return Ok(new { username=redis.Get<string>("person:" + userID + ":username")});
+
+            return Ok(new { username = redis.Get<string>("person:" + userID + ":username") });
         }
 
         [HttpGet]
         [Route("GetComments/{postID}")]
-        public IActionResult GetComments(string postID) 
+        public IActionResult GetComments(string postID)
         {
             var result = redis.GetAllItemsFromList("post:" + postID + ":comments");
             var comments = new List<Comment>();
             foreach (var id in result)
             {
-                var comment=redis.Get<Comment>("comment:" + id + ":comment");
+                var comment = redis.Get<Comment>("comment:" + id + ":comment");
                 comments.Add(comment);
             }
             return Ok(new { comments });
@@ -191,7 +193,7 @@ namespace Anonymer.Controllers
         [Route("GetUpvotes/{postID}")]
         public IActionResult GetUpvotes(string postID)
         {
-            var upvotes = redis.GetAllItemsFromList("post:" + postID + ":upvotes");
+            var upvotes = redis.GetAllItemsFromSet("post:" + postID + ":upvotes");
             var users = new List<Person>();
             foreach (var id in upvotes)
             {
@@ -205,7 +207,7 @@ namespace Anonymer.Controllers
         [Route("GetDownvotes/{postID}")]
         public IActionResult GetDownvotes(string postID)
         {
-            var downvotes = redis.GetAllItemsFromList("post:" + postID + ":downvotes");
+            var downvotes = redis.GetAllItemsFromSet("post:" + postID + ":downvotes");
             var users = new List<Person>();
             foreach (var id in downvotes)
             {
@@ -286,7 +288,7 @@ namespace Anonymer.Controllers
             var result = redis.Get<Comment>("comment:" + commentID + ":comment");
             result.Upvotes++;
             redis.Set("comment:" + commentID + ":comment", result);
-            redis.PushItemToList("comment:" + commentID + ":upvotes", userID);
+            redis.AddItemToSet("comment:" + commentID + ":upvotes", userID);
             return Ok();
         }
 
@@ -297,7 +299,7 @@ namespace Anonymer.Controllers
             var result = redis.Get<Comment>("comment:" + commentID + ":comment");
             result.Downvotes++;
             redis.Set("comment:" + commentID + ":comment", result);
-            redis.PushItemToList("comment:" + commentID + ":downvotes", userID);
+            redis.AddItemToSet("comment:" + commentID + ":downvotes", userID);
             return Ok();
         }
 
@@ -305,7 +307,7 @@ namespace Anonymer.Controllers
         [Route("GetCommentUpvotes/{commentID}")]
         public IActionResult GetCommentUpvotes(string commentID)
         {
-            var upvotes = redis.GetAllItemsFromList("comment:" + commentID + ":upvotes");
+            var upvotes = redis.GetAllItemsFromSet("comment:" + commentID + ":upvotes");
             var users = new List<Person>();
             foreach (var id in upvotes)
             {
@@ -319,7 +321,7 @@ namespace Anonymer.Controllers
         [Route("GetCommentDownvotes/{commentID}")]
         public IActionResult GetCommentDownvotes(string commentID)
         {
-            var downvotes = redis.GetAllItemsFromList("comment:" + commentID + ":downvotes");
+            var downvotes = redis.GetAllItemsFromSet("comment:" + commentID + ":downvotes");
             var users = new List<Person>();
             foreach (var id in downvotes)
             {
@@ -338,7 +340,7 @@ namespace Anonymer.Controllers
             post.Time = DateTime.Now;
             redis.Set("post:" + postID + ":post", post);
 
-            return Ok(new { post});
+            return Ok(new { post });
         }
 
         [HttpPut]
