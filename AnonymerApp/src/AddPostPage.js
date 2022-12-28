@@ -48,7 +48,7 @@ export default function AddPostPagePage(props) {
                 'Content-Type': 'application/json'
             }
         })
-        
+
         if (response.ok) {
             const data = await response.json();
             //console.log(data);
@@ -85,70 +85,70 @@ export default function AddPostPagePage(props) {
         setContent(event.target.value);
         console.log(event.target.value);
     }
-    
-    if(submitted=="no")
+
+    if (submitted == "no")
         return (
-        <Container component="main"  >
-            <CssBaseline />
-            <React.Fragment>
-                <Paper
-                    sx={{ p: 3, mb: 4, backgroundColor: theme.palette.mode === 'dark' ? "#3a3b3c" : "whitesmoke", }}
-                    variant="outlined"
-                >
-                    <Typography component="h1" variant="h4" align="center" sx={{ m: 2 }}>
-                        Create a <span style={{ color: 'red', fontWeight: 'bold' }}>new post </span> ! 
-                    </Typography>
-                </Paper>
-                <Paper
-                    sx={{ p: 3, mb: 2 }}
-                    variant="outlined"
-                >
-                    <Grid container style={{ alignItems: "center", justifyContent: "center" }} spacing={3} sx={{ mb: 3 }}>
+            <Container component="main"  >
+                <CssBaseline />
+                <React.Fragment>
+                    <Paper
+                        sx={{ p: 3, mb: 4, backgroundColor: theme.palette.mode === 'dark' ? "#3a3b3c" : "whitesmoke", }}
+                        variant="outlined"
+                    >
+                        <Typography component="h1" variant="h4" align="center" sx={{ m: 2 }}>
+                            Create a <span style={{ color: '#32CD32', fontWeight: 'bold' }}>new post </span> !
+                        </Typography>
+                    </Paper>
+                    <Paper
+                        sx={{ p: 3, mb: 2 }}
+                        variant="outlined"
+                    >
+                        <Grid container style={{ alignItems: "center", justifyContent: "center" }} spacing={3} sx={{ mb: 3 }}>
 
-                        <Grid item xs={12} style={{ top: 10, alignItems: "center", justifyContent: "center" }}>
-                            <Typography align="center" sx={{ m: 2 }}> Choose a category </Typography>
-                            <Select fullWidth style={{ marginLeft: 4, marginRight: 6 }}
-                                labelId="demo-simple-select-standard-label"
-                                id="demo-simple-select-standard"
-                                value={intQ}
-                                onChange={handleIntQChange}
-                            >
-                                {(categoryData != undefined) ?
-                                    categoryData.map((el, index) => (
-                                        <MenuItem key={index} value={el.id}>{el.name}</MenuItem>
-                                    )) : ""
-                                }
-                            </Select>
+                            <Grid item xs={12} style={{ top: 10, alignItems: "center", justifyContent: "center" }}>
+                                <Typography align="center" sx={{ m: 2 }}> Choose a category </Typography>
+                                <Select fullWidth style={{ marginLeft: 4, marginRight: 6 }}
+                                    labelId="demo-simple-select-standard-label"
+                                    id="demo-simple-select-standard"
+                                    value={intQ}
+                                    onChange={handleIntQChange}
+                                >
+                                    {(categoryData != undefined) ?
+                                        categoryData.map((el, index) => (
+                                            <MenuItem key={index} value={el.id}>{el.name}</MenuItem>
+                                        )) : ""
+                                    }
+                                </Select>
 
-                        </Grid>
-                    </Grid>
-                        <br></br>
-                    <Box sx={{ mb: 3 }} variant="outlined">
-                        <Divider sx={{ mt: 2, mb: 3 }} >POST CONTENT</Divider>
-                        <Grid container spacing={3} sx={{ mb: 4 }}>
-
-                            <Grid item xs={12}>
-                                <TextField type="name" name={"content"} label={"Input text here"} onChange={(event) => handleContentChange(event)} fullWidth multiline rows={4} />
                             </Grid>
-
                         </Grid>
-                        <Button onClick={_submitForm}
-                            variant="contained" endIcon={<SendIcon />}> Submit new post </Button>
-                    </Box >
-                    
-                    
-                </Paper>
+                        <br></br>
+                        <Box sx={{ mb: 3 }} variant="outlined">
+                            <Divider sx={{ mt: 2, mb: 3 }} >POST CONTENT</Divider>
+                            <Grid container spacing={3} sx={{ mb: 4 }}>
 
-            </React.Fragment>
-        </Container>
-    );
-    else return(
+                                <Grid item xs={12}>
+                                    <TextField type="name" name={"content"} label={"Input text here"} onChange={(event) => handleContentChange(event)} fullWidth multiline rows={4} />
+                                </Grid>
+
+                            </Grid>
+                            <Button onClick={_submitForm}
+                                variant="contained" endIcon={<SendIcon />}> Submit new post </Button>
+                        </Box >
+
+
+                    </Paper>
+
+                </React.Fragment>
+            </Container>
+        );
+    else return (
         <Typography component="h1" variant="h2" align="center">
             <CheckCircleOutlineRoundedIcon color="success" sx={{ fontSize: 100, mt: 10 }} />
             <br />
             Post successfully created
             <br />
-            <Button variant="contained" href={"http://localhost:3000/PersonProfile/"+localStorage.getItem("userID")} style={{marginTop:30, backgroundColor:"#f50057"}}>VIEW POST ON PROFILE</Button>
+            <Button variant="contained" href={"http://localhost:3000/PersonProfile/" + localStorage.getItem("userID")} style={{ marginTop: 30, backgroundColor: "#f50057" }}>VIEW POST ON PROFILE</Button>
         </Typography>
 
     );

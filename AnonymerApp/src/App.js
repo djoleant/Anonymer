@@ -1,31 +1,10 @@
-import logo from "./logo.svg";
 import * as React from "react";
 import "./App.css";
-import SignIn from "./SignIn";
-import Register from "./Register";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import Button from "@mui/material/Button";
 import { Routes, Route, Link } from "react-router-dom";
 import Header from "./components/Header";
-import { Component } from "react";
-import CVCreator from "./CVCreator";
-import CVGenerator from "./CVGenerator";
-import EmployerInfoPage from "./EmployerInfoPage";
-import EmployerRatingPage from "./EmployerRatingPage";
-import StudentProfilePage from "./StudentProfilePage";
-import Internships from "./Internships";
-import Chat from "./Chat/Chat";
-import EmployerInternsipPage from "./EmployerInternshipPage";
-import Employers from "./Employers";
-import InternshipCreator from "./InternshipCreator";
-import HomePage from "./HomePage";
 import AboutUsPage from "./AboutUsPage";
-import Redirect from "./components/Redirect";
-import Profile from "./components/Profile";
-import { loadUserData, clearData } from "./actions/Auth";
 import NotFoundPage from "./components/NotFoundPage";
-import SuccessRating from "./components/SuccessRating";
-import AdminPage from "./AdminPage";
 import AddPostPage from "./AddPostPage";
 import PersonProfilePage from "./PersonProfilePage";
 import Feed from "./Feed";
@@ -38,7 +17,7 @@ const getDesignTokens = (mode) => ({
       ? {
         // palette values for light mode
         primary: {
-          main: "#618fba", //618fba - lepa je
+          main: "#2c2c2c", //618fba - lepa je
         },
         secondary: {
           main: "#f50057",
@@ -47,7 +26,7 @@ const getDesignTokens = (mode) => ({
       : {
         // palette values for dark mode
         primary: {
-          main: "#618fba",
+          main: "#32CD32",
         },
         secondary: {
           main: "#f50057",
@@ -88,10 +67,10 @@ const getDesignTokens = (mode) => ({
     },
   },
   shape: {
-    borderRadius: 16,
+    borderRadius: 3,
   },
   typography: {
-    fontFamily: "Montserrat",
+    fontFamily: "IBM Plex Mono",
   },
 });
 
@@ -242,192 +221,7 @@ export default function App() {
     <div className="App">
       <ThemeProvider theme={theme}>
         <Routes>
-          <Route
-            path="/SignIn"
-            element={
-              <Header
-                Component={SignIn}
-                ThemeHandler={colorMode.toggleColorMode}
-              />
-            }
-          />
-          <Route
-            path="/Register/:role"
-            element={
-              <Header
-                Component={Register}
-                ThemeHandler={colorMode.toggleColorMode}
-              />
-            }
-          />
-          <Route
-            path="/CVCreator"
-            element={
-              <Redirect
-                to="/SignIn"
-                roles={["Student"]}
-                component={
-                  <Header
-                    Component={CVCreator}
-                    ThemeHandler={colorMode.toggleColorMode}
-                  />
-                }
-              />
-            }
-          />
-          <Route
-            path="/AdminDashboard"
-            element={
-              <Redirect
-                to="/"
-                roles={["Admin"]}
-                component={
-                  <Header
-                    Component={AdminPage}
-                    ThemeHandler={colorMode.toggleColorMode}
-                  />
-                }
-              />
-            }
-          />
-          <Route
-            path="/CVGenerator"
-            element={
-              <Header
-                Component={CVGenerator}
-                ThemeHandler={colorMode.toggleColorMode}
-              />
-            }
-          />
-          <Route
-            path="/Internships"
-            element={
-              <Header
-                Component={Internships}
-                ThemeHandler={colorMode.toggleColorMode}
-              />
-            }
-          />
-          <Route
-            path="/InternshipCreator"
-            element={
-              <Header
-                Component={InternshipCreator}
-                ThemeHandler={colorMode.toggleColorMode}
-              />
-            }
-          />
-          <Route
-            path="/MyAccount"
-            element={
-              <Redirect
-                to="/SignIn"
-                roles={["Student", "Employer"]}
-                component={
-                  <Header
-                    Component={Profile}
-                    ThemeHandler={colorMode.toggleColorMode}
-                  />
-                }
-              />
-            }
-          />
-          <Route
-            path="/Student/:id"
-            element={
-              <Header
-                Component={StudentProfilePage}
-                ThemeHandler={colorMode.toggleColorMode}
-                componentType="public"
-              />
-            }
-          />
-          <Route
-            path="/Employer/:id"
-            element={
-              <Header
-                Component={EmployerInfoPage}
-                ThemeHandler={colorMode.toggleColorMode}
-                componentType="public"
-              />
-            }
-          />
-          {/* <Route
-            path="/EmployerInfoPage"
-            element={
-              <Header
-                Component={EmployerInfoPage}
-                ThemeHandler={colorMode.toggleColorMode}
-              />
-            }
-          /> */}
-          <Route
-            path="/Employers"
-            element={
-              <Header
-                Component={Employers}
-                ThemeHandler={colorMode.toggleColorMode}
-              />
-            }
-          />
-          <Route
-            path="/EmployerRatingPage/:id"
-            element={
-              <Header
-                Component={EmployerRatingPage}
-                ThemeHandler={colorMode.toggleColorMode}
-              />
-            }
-          />
-          {/* <Route
-            path="/StudentProfile"
-            element={
-              <Header
-                Component={StudentProfilePage}
-                ThemeHandler={colorMode.toggleColorMode}
-              />
-            }
-          /> */}
 
-          <Route
-            path="/Chat/:id"
-            element={
-              <Redirect
-                to="/SignIn"
-                roles={["Student", "Employer"]}
-                component={
-                  <Header
-                    Component={Chat}
-                    ThemeHandler={colorMode.toggleColorMode}
-                  />
-                }
-              />
-            }
-          />
-          <Route
-            path="/Chat"
-            element={
-              <Redirect
-                to="/SignIn"
-                roles={["Student", "Employer"]}
-                component={
-                  <Header
-                    Component={Chat}
-                    ThemeHandler={colorMode.toggleColorMode}
-                  />
-                }
-              />
-            }
-          />
-          <Route
-            path="/Internship/:id"
-            element={
-              <Header
-                Component={EmployerInternsipPage}
-                ThemeHandler={colorMode.toggleColorMode}
-              />
-            }
-          />
           <Route
             path="/Feed"
             element={
@@ -482,15 +276,7 @@ export default function App() {
               />
             }
           />
-          <Route
-            path="/SuccessRating"
-            element={
-              <Header
-                Component={SuccessRating}
-                ThemeHandler={colorMode.toggleColorMode}
-              />
-            }
-          />
+
           <Route
             path="/Post/:id"
             element={

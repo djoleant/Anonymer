@@ -14,17 +14,14 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import MenuItem from "@mui/material/MenuItem";
-import { ThemeProvider, createTheme } from "@mui/material/styles";
 import Badge from "@mui/material/Badge";
 import MailIcon from "@mui/icons-material/Mail";
 import Switch from "./ThemeSwitch";
-import { changeTheme } from "../App";
 import { Divider, TextField } from "@mui/material";
-import { logout } from "../actions/Auth";
 import { useTheme } from "@emotion/react";
 import SensorOccupiedIcon from '@mui/icons-material/SensorOccupied';
 
-const pages = ["Feed","Chat"];
+const pages = ["Feed", "Chat"];
 
 export const Header = (props) => {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
@@ -76,10 +73,10 @@ export const Header = (props) => {
 
   const [username, setUsername] = useState("");
 
-  
+
   return (
     <React.Fragment>
-      
+
       <AppBar position="sticky">
         <Container maxWidth="xl">
           <Toolbar disableGutters>
@@ -152,7 +149,7 @@ export const Header = (props) => {
               <Box sx={{ flexGrow: 0 }}>
                 <Tooltip title="Open settings">
                   <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                    <SensorOccupiedIcon />
+                    <SensorOccupiedIcon color="white" />
                   </IconButton>
                 </Tooltip>
                 <Menu
