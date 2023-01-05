@@ -46,7 +46,7 @@ Anonymer is student project done for Advanced Databases subject at Faculty of El
 | ```next:post:id```  |  globalni id za ispovest |
 | ```next:category:id```  | globalni id za kategoriju  |
 | ```next:person:id```  |  globalni id za person |
-|```categories:all```|lista ID-jeva svih kategorija|
+|```categories:all```|set ID-jeva svih kategorija|
 |```category:[ID_KATEGORIJE]:posts```|lista ID-jeva objava u kategoriji|
 |```category:[ID_KATEGORIJE]:postssorted```|sortirani skup ID-jeva objava u kategoriji|
 |```category:[ID_KATEGORIJE]:name```|naziv kategorije|

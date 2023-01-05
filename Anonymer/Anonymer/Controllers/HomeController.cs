@@ -61,7 +61,7 @@ namespace Anonymer.Controllers
         {
             string id = GetNextCategoryID();
             redis.Set("category:" + id + ":name", name);
-            redis.PushItemToList("categories:all", id);
+            redis.AddItemToSet("categories:all", id);
             return Ok(new { id });
         }
 
@@ -305,7 +305,7 @@ namespace Anonymer.Controllers
         [Route("GetCategories")]
         public IActionResult GetCategories()
         {
-            var resultList = redis.GetAllItemsFromList("categories:all");
+            var resultList = redis.GetAllItemsFromSet("categories:all");
             List<Category> categories = new List<Category>();
             foreach (var id in resultList)
             {
