@@ -2,6 +2,41 @@
 
 Anonymer is student project done for Advanced Databases subject at Faculty of Electronic Engineering, University of Niš.
 
+## ✨ Contributors (Student, ID)
+
+* Emilija Ćojbašić, 18026
+* Matija Špeletić, 18043
+* Đorđe Antić, 17544
+
+<a href="https://github.com/djoleant/InternClix/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=djoleant/InternClix" />
+</a>
+
+## 📦 Stack
+* Redis
+* Asp.net WebApi
+* React (JS)
+
+## 🚀 Quickstart
+
+```bash
+> # Clone repository
+> git clone https://github.com/djoleant/Anonymer.git
+> cd Anonymer
+
+> # Server start
+> cd Anonymer/Anonymer
+> dotnet watch run
+
+> # Client start
+> cd ../../AnonymerApp
+> npm install
+> npm start
+
+> # Start redis in docker
+> docker run --name <name> -p <port_laptop>:<port_container> -d redis
+```
+
 ## Backend
 
 ### Struktura
