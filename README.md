@@ -34,7 +34,7 @@ Anonymer is student project done for Advanced Databases subject at Faculty of El
 > npm start
 
 > # Start redis in docker
-> docker run --name <name> -p <port_laptop>:<port_container> -d redis
+> docker run --name redis-6opZ -p 49153:6379 -d redis
 ```
 
 ## Backend
