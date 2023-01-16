@@ -1,5 +1,4 @@
-# Anonymer - Redis 
-<img src="https://avatars.githubusercontent.com/u/1529926?s=200&v=4" width="40" height="50" /> 
+# Anonymer ![Redis](https://img.shields.io/badge/redis-%23DD0031.svg?style=for-the-badge&logo=redis&logoColor=white)
 Anonymer is student project done for Advanced Databases subject at Faculty of Electronic Engineering, University of Niš.
 
 ## ✨ Contributors (Student, ID)
