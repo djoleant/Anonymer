@@ -36,7 +36,7 @@ Anonymer is student project done for Advanced Databases subject at Faculty of El
 > docker run --name redis-6opZ -p 49153:6379 -d redis
 ```
 
-## Backend
+## 🔙🔚 Backend
 
 ### Struktura
 
